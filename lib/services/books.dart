@@ -8,10 +8,11 @@ class BooksClient {
   Future<List<BookModel>> getBooks({
     required String pattern,
     int startIndex = 0,
-    int maxResults = 10,
+    int maxResults = 30,
   }) async {
     var url = Uri.parse(
       '$BOOKS_GOOGLE_URI_V1?q=$pattern&startIndex=$startIndex&maxResults=$maxResults',
+      // '$BOOKS_GOOGLE_URI_V1?q=$pattern',
     );
 
     List<BookModel> _books = [];

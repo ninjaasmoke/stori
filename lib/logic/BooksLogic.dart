@@ -47,7 +47,7 @@ class BooksBloc extends Bloc<BooksEvent, BooksState> {
   @override
   Stream<BooksState> mapEventToState(BooksEvent event) async* {
     if (event is SearchBooksEvent) {
-      yield LoadingBooksState(loadingMessage: 'Searching...');
+      // yield LoadingBooksState(loadingMessage: 'Searching...');
       try {
         // TODO
         List<BookModel> books =

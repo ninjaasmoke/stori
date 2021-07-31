@@ -10,6 +10,7 @@ class BookModel {
   final String description;
   final int pageCount;
   final String imageUrl;
+  final String thumbnailUrl;
   final String snippet;
 
   BookModel({
@@ -22,6 +23,7 @@ class BookModel {
     required this.description,
     required this.pageCount,
     required this.imageUrl,
+    required this.thumbnailUrl,
     required this.snippet,
   });
 
@@ -35,8 +37,15 @@ class BookModel {
       publishedDate: json["volumeInfo"]["publishedDate"] ?? "",
       description: json["volumeInfo"]["description"] ?? "",
       pageCount: json["volumeInfo"]["pageCount"] ?? 0,
-      imageUrl: json["volumeInfo"]["imageLinks"]["thumbnail"] ?? "",
-      snippet: json["searchInfo"]["textSnippet"] ?? "",
+      imageUrl: json["volumeInfo"]["imageLinks"] != null
+          ? json["volumeInfo"]["imageLinks"]["thumbnail"] ?? ""
+          : "",
+      thumbnailUrl: json["volumeInfo"]["imageLinks"] != null
+          ? json["volumeInfo"]["imageLinks"]["smallThumbnail"] ?? ""
+          : "",
+      snippet: json["searchInfo"] != null
+          ? json["searchInfo"]["textSnippet"] ?? ""
+          : "",
     );
   }
 }

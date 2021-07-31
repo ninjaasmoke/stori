@@ -18,6 +18,8 @@ class _SearchPageState extends State<SearchPage> {
   FocusNode _focus = new FocusNode();
   TextEditingController _controller = new TextEditingController();
 
+  List<BookModel> books = [];
+
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,9 @@ class _SearchPageState extends State<SearchPage> {
       appBar: _appBar(),
       body: BlocConsumer<BooksBloc, BooksState>(
         builder: (context, state) {
+          if (state is SearchBooksState) {
+            books = state.books;
+          }
           return _body(state);
         },
         listener: (context, state) {},
@@ -51,32 +56,36 @@ class _SearchPageState extends State<SearchPage> {
     return AppBar(
       backgroundColor: appBarBGColor,
       automaticallyImplyLeading: true,
+      title: Text('Discover'),
     );
   }
 
   Widget _body(BooksState s) {
-    return Column(
-      children: <Widget>[
-        AnimatedContainer(
-          duration: Duration(milliseconds: 120),
-          height: !searchEnabled ? 0 : 8.0,
-        ),
-        _searchBar(),
-        AnimatedContainer(
-          duration: Duration(milliseconds: 120),
-          height: !searchEnabled ? 0 : 16.0,
-        ),
-        if (s is SearchBooksState) _searchResults(s.books),
-      ],
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        children: <Widget>[
+          _searchBar(),
+          SizedBox(
+            height: 12.0,
+          ),
+          _searchResults(books), // TODO : else render popular searches
+        ],
+      ),
     );
   }
 
   Widget _searchResults(List<BookModel> books) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.9 - 100,
+      height: MediaQuery.of(context).size.height * 0.9,
       width: MediaQuery.of(context).size.width,
+      padding: new EdgeInsets.only(bottom: 78),
       child: GridView.builder(
+        physics: BouncingScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 4.0,
+          mainAxisSpacing: 6.0,
+          mainAxisExtent: 200,
           crossAxisCount: 3,
         ),
         itemBuilder: (_, index) => bookCard(books[index]),
@@ -87,51 +96,59 @@ class _SearchPageState extends State<SearchPage> {
 
   Widget _searchBar() {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 120),
+      duration: Duration(milliseconds: 200),
       width: MediaQuery.of(context).size.width,
-      margin: searchEnabled ? EdgeInsets.all(0) : EdgeInsets.all(16.0),
-      height: searchEnabled ? 48 : 40,
-      color: searchBarColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          AnimatedContainer(
-            duration: Duration(milliseconds: 120),
-            width: searchEnabled ? 12 : 20,
-          ),
-          Icon(
-            Icons.search,
-            color: lightIconColor,
-          ),
-          AnimatedContainer(
-            duration: Duration(milliseconds: 120),
-            width: searchEnabled ? 26 : 20,
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width - 120.0,
-            child: TextField(
-              onChanged: (String pattern) {
-                context
-                    .read<BooksBloc>()
-                    .add(SearchBooksEvent(pattern: pattern));
-              },
-              focusNode: _focus,
-              controller: _controller,
-              style: TextStyle(
-                color: primaryTextColor,
-              ),
-              cursorColor: primaryTextColor,
-              decoration: InputDecoration(
-                border: OutlineInputBorder(borderSide: BorderSide.none),
-                contentPadding: EdgeInsets.all(0),
-                hintText: "Search for books, people, etc.",
-                hintStyle: TextStyle(
-                  color: tertiaryTextColor,
+      padding: searchEnabled
+          ? EdgeInsets.all(0)
+          : EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      height: 52,
+      child: Container(
+        color: searchBarColor,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              width: searchEnabled ? 12 : 20,
+            ),
+            Icon(
+              Icons.search,
+              color: lightIconColor,
+            ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              width: searchEnabled ? 26 : 20,
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width - 120.0,
+              child: TextField(
+                onSubmitted: (String pattern) {
+                  if (pattern.isNotEmpty)
+                    context
+                        .read<BooksBloc>()
+                        .add(SearchBooksEvent(pattern: pattern));
+                },
+                focusNode: _focus,
+                controller: _controller,
+                style: TextStyle(
+                  color: primaryTextColor,
+                ),
+                cursorColor: primaryTextColor,
+                textInputAction: TextInputAction.search,
+                smartQuotesType: SmartQuotesType.enabled,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(borderSide: BorderSide.none),
+                  contentPadding: EdgeInsets.all(0),
+                  hintText: "Search for books, people, etc.",
+                  hintStyle: TextStyle(
+                    color: tertiaryTextColor,
+                  ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
