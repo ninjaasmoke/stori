@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stori/models/UserModel.dart';
 import 'package:stori/services/auth.dart';
+import 'package:stori/services/store.dart';
 
 // Events
 abstract class UserEvent {
@@ -65,12 +66,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         bool? isLoggedIn = _prefs.getBool('isLoggedIn');
 
         if (isLoggedIn == true) {
+          print("User has logged in");
           User? user = await signInWithGoogle();
-          AppUser appUser = new AppUser(
-            displayName: user!.displayName,
-            uid: user.uid,
-            username: user.email,
-          );
+          FireStoreService _fireStore = FireStoreService();
+          AppUser appUser = await _fireStore.getUser(user!.uid);
+          print(appUser);
+          print('app user');
           yield LoggedInUserState(user: appUser);
         } else {
           yield LoggedOutUserState();
@@ -85,8 +86,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         AppUser appUser = new AppUser(
           displayName: user!.displayName,
           uid: user.uid,
-          username: user.email,
+          username: '',
         );
+        FireStoreService _fireStore = FireStoreService();
+        await _fireStore.addUser(appUser);
         SharedPreferences _prefs = await SharedPreferences.getInstance();
 
         _prefs.setBool('isLoggedIn', true);

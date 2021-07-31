@@ -53,6 +53,10 @@ class MyApp extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 customSnackBar(text: "Loading..."),
               );
+            } else if (state is ErrorUserState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customSnackBar(text: state.errorMessage, milli: 10000),
+              );
             }
             // else if (state is LoggedInUserState) {
             //   ScaffoldMessenger.of(context).showSnackBar(

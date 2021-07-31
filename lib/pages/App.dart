@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/UserBloc.dart';
+import 'package:stori/services/store.dart';
 
 class AppPage extends StatefulWidget {
   const AppPage({Key? key}) : super(key: key);
@@ -55,6 +56,23 @@ class _AppPageState extends State<AppPage> {
           ),
           onPressed: () {
             c.read<UserBloc>().add(LogoutUserEvent());
+          },
+        ),
+        TextButton(
+          style: TextButton.styleFrom(
+            backgroundColor: Colors.white,
+          ),
+          child: Text(
+            "Fetch",
+            style: TextStyle(
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.0,
+            ),
+          ),
+          onPressed: () {
+            FireStoreService service = new FireStoreService();
+            service.getUser(s.user.uid);
           },
         ),
       ],
