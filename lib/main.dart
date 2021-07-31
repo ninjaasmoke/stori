@@ -61,7 +61,7 @@ class MyApp extends StatelessWidget {
               );
             } else if (state is LoggingInUserState) {
               ScaffoldMessenger.of(context).showSnackBar(
-                customSnackBar(text: state.loggingInMessage, milli: 2000),
+                customSnackBar(text: 'Logging in...', milli: 2000),
               );
             }
             //  else if (state is LoggedOutUserState) {

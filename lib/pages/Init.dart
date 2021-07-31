@@ -16,7 +16,9 @@ class _InitPageState extends State<InitPage> {
       body: Center(
         child: Text(
           'Stori',
-          style: GoogleFonts.raleway(
+          style: TextStyle(
+            fontFamily: TITLE_FONT,
+            letterSpacing: 4.0,
             fontSize: 40.0,
             fontWeight: FontWeight.w900,
             color: accentcolor,
