@@ -10,4 +10,9 @@ final Color primaryTextColor = new Color(0xFFFFFFFF);
 final Color secondaryTextColor = Color(0xff181818);
 final Color tertiaryTextColor = Colors.grey;
 
+final Color tileColor = Colors.grey.shade800;
+final Color searchBarColor = Color(0xff242424);
+
+final Color lightIconColor = Colors.grey;
+
 const String TITLE_FONT = 'title';

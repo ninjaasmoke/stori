@@ -4,6 +4,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/UserBloc.dart';
+import 'package:stori/pages/Profile.dart';
+import 'package:stori/pages/Search.dart';
 
 class AppPage extends StatefulWidget {
   const AppPage({Key? key}) : super(key: key);
@@ -42,25 +44,30 @@ class _AppPageState extends State<AppPage> {
 
   AppBar _appBar(String? url) {
     return AppBar(
-      backgroundColor: appBarBGColor,
-      leadingWidth: 100,
-      leading: Container(
-        padding: EdgeInsets.symmetric(horizontal: 12.0),
-        alignment: Alignment.center,
-        child: Text(
-          'stori',
-          style: TextStyle(
-            fontFamily: TITLE_FONT,
-            fontSize: 28.0,
-            letterSpacing: 2.0,
-            fontWeight: FontWeight.w900,
-            color: accentcolor,
-          ),
+      backgroundColor: Colors.transparent,
+      elevation: 0,
+      automaticallyImplyLeading: false,
+      centerTitle: false,
+      title: Text(
+        'stori',
+        style: TextStyle(
+          fontFamily: TITLE_FONT,
+          fontSize: 28.0,
+          letterSpacing: 2.0,
+          fontWeight: FontWeight.w900,
+          color: accentcolor,
         ),
       ),
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => SearchPage(),
+              ),
+            );
+          },
           icon: Icon(
             CupertinoIcons.search,
           ),
@@ -72,9 +79,17 @@ class _AppPageState extends State<AppPage> {
             child: CircleAvatar(
               radius: 18.0,
               backgroundImage: NetworkImage(url!),
+              backgroundColor: Colors.transparent,
             ),
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => ProfilePage(),
+              ),
+            );
+          },
         ),
       ],
     );
@@ -83,32 +98,7 @@ class _AppPageState extends State<AppPage> {
   Widget _body(BuildContext c, LoggedInUserState s) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Center(
-          child: Text(
-            "Hello ${s.user.displayName}\n${s.user.username}",
-            style: TextStyle(
-              color: accentcolor,
-            ),
-          ),
-        ),
-        TextButton(
-          style: TextButton.styleFrom(
-            backgroundColor: Colors.white,
-          ),
-          child: Text(
-            "Logout",
-            style: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 14.0,
-            ),
-          ),
-          onPressed: () {
-            c.read<UserBloc>().add(LogoutUserEvent());
-          },
-        ),
-      ],
+      children: [],
     );
   }
 }

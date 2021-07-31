@@ -91,7 +91,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         AppUser appUser = new AppUser(
           displayName: user!.displayName,
           uid: user.uid,
-          username: '',
+          username: user.displayName,
           photoURL: user.photoURL,
         );
         FireStoreService _fireStore = FireStoreService();
