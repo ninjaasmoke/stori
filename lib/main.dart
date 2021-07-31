@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
+import 'package:stori/logic/BooksLogic.dart';
 import 'package:stori/logic/UserBloc.dart';
 import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<UserBloc>(
           create: (context) => UserBloc()..add(FetchUserEvent()),
+        ),
+        BlocProvider<BooksBloc>(
+          create: (context) => BooksBloc(),
         ),
       ],
       child: MaterialApp(
@@ -62,6 +66,13 @@ class MyApp extends StatelessWidget {
             } else if (state is LoggingInUserState) {
               ScaffoldMessenger.of(context).showSnackBar(
                 customSnackBar(text: 'Logging in...', milli: 2000),
+              );
+            } else if (state is LoggedInUserState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customSnackBar(
+                  text: "Welcome ${state.user.displayName}",
+                  milli: 2000,
+                ),
               );
             }
             //  else if (state is LoggedOutUserState) {

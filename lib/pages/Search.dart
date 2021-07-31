@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:stori/components/BookCard.dart';
 import 'package:stori/constants.dart';
+import 'package:stori/logic/BooksLogic.dart';
+import 'package:stori/models/BookModel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -34,7 +38,12 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
-      body: _body(),
+      body: BlocConsumer<BooksBloc, BooksState>(
+        builder: (context, state) {
+          return _body(state);
+        },
+        listener: (context, state) {},
+      ),
     );
   }
 
@@ -45,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _body() {
+  Widget _body(BooksState s) {
     return Column(
       children: <Widget>[
         AnimatedContainer(
@@ -57,13 +66,22 @@ class _SearchPageState extends State<SearchPage> {
           duration: Duration(milliseconds: 120),
           height: !searchEnabled ? 0 : 16.0,
         ),
-        TextButton(
-          onPressed: () {
-            _loseFocus();
-          },
-          child: Text("something..."),
-        ),
+        if (s is SearchBooksState) _searchResults(s.books),
       ],
+    );
+  }
+
+  Widget _searchResults(List<BookModel> books) {
+    return Container(
+      height: MediaQuery.of(context).size.height * 0.9 - 100,
+      width: MediaQuery.of(context).size.width,
+      child: GridView.builder(
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 3,
+        ),
+        itemBuilder: (_, index) => bookCard(books[index]),
+        itemCount: books.length,
+      ),
     );
   }
 
@@ -92,6 +110,11 @@ class _SearchPageState extends State<SearchPage> {
           Container(
             width: MediaQuery.of(context).size.width - 120.0,
             child: TextField(
+              onChanged: (String pattern) {
+                context
+                    .read<BooksBloc>()
+                    .add(SearchBooksEvent(pattern: pattern));
+              },
               focusNode: _focus,
               controller: _controller,
               style: TextStyle(

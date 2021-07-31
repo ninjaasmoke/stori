@@ -29,16 +29,7 @@ class _AppPageState extends State<AppPage> {
           child: CircularProgressIndicator(),
         );
       },
-      listener: (c, s) {
-        if (s is LoggedInUserState) {
-          ScaffoldMessenger.of(c).showSnackBar(
-            customSnackBar(
-              text: "Welcome ${s.user.displayName}",
-              milli: 2000,
-            ),
-          );
-        }
-      },
+      listener: (c, s) {},
     );
   }
 

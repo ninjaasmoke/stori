@@ -16,3 +16,6 @@ final Color searchBarColor = Color(0xff242424);
 final Color lightIconColor = Colors.grey;
 
 const String TITLE_FONT = 'title';
+
+const String BOOKS_GOOGLE_URI_V1 =
+    'https://www.googleapis.com/books/v1/volumes';
