@@ -15,22 +15,24 @@ class LoginPage extends StatelessWidget {
             child: Center(
               child: Row(
                 children: [
-                  Expanded(
-                    child: TextButton(
-                      style: TextButton.styleFrom(
-                        backgroundColor: Colors.white,
-                      ),
-                      child: Text(
-                        "Continue with Google",
-                        style: TextStyle(
-                          color: Colors.black,
+                  s is LoadingUserState
+                      ? CircularProgressIndicator()
+                      : Expanded(
+                          child: TextButton(
+                            style: TextButton.styleFrom(
+                              backgroundColor: Colors.white,
+                            ),
+                            child: Text(
+                              "Continue with Google",
+                              style: TextStyle(
+                                color: Colors.black,
+                              ),
+                            ),
+                            onPressed: () {
+                              c.read<UserBloc>().add(LoginUserEvent());
+                            },
+                          ),
                         ),
-                      ),
-                      onPressed: () {
-                        c.read<UserBloc>().add(LoginUserEvent());
-                      },
-                    ),
-                  ),
                 ],
               ),
             ),

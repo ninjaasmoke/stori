@@ -36,6 +36,11 @@ class LoadingUserState extends UserState {
   const LoadingUserState({required this.loadingMessage});
 }
 
+class LoggingInUserState extends UserState {
+  final String loggingInMessage;
+  const LoggingInUserState({required this.loggingInMessage});
+}
+
 class LoggedInUserState extends UserState {
   final AppUser user;
   const LoggedInUserState({required this.user});
@@ -80,7 +85,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is LoginUserEvent) {
-      yield LoadingUserState(loadingMessage: 'Logging in...');
+      yield LoggingInUserState(loggingInMessage: 'Logging in...');
       try {
         User? user = await signInWithGoogle();
         AppUser appUser = new AppUser(

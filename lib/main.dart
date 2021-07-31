@@ -43,7 +43,9 @@ class MyApp extends StatelessWidget {
             if (state is LoggedInUserState) {
               return AppPage();
             }
-            if (state is LoggedOutUserState || state is ErrorUserState) {
+            if (state is LoggedOutUserState ||
+                state is ErrorUserState ||
+                state is LoggingInUserState) {
               return LoginPage();
             }
             return LoginPage();
@@ -57,15 +59,13 @@ class MyApp extends StatelessWidget {
               ScaffoldMessenger.of(context).showSnackBar(
                 customSnackBar(text: state.errorMessage, milli: 10000),
               );
+            } else if (state is LoggingInUserState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                customSnackBar(text: state.loggingInMessage, milli: 2000),
+              );
             }
-            // else if (state is LoggedInUserState) {
-            //   ScaffoldMessenger.of(context).showSnackBar(
-            //     customSnackBar(text: "Logged In!", milli: 2000),
-            //   );
-            // } else if (state is LoggedOutUserState) {
-            //   ScaffoldMessenger.of(context).showSnackBar(
-            //     customSnackBar(text: "Logged Out!", milli: 2000),
-            //   );
+            //  else if (state is LoggedOutUserState) {
+
             // }
           },
         ),
