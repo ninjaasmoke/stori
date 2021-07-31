@@ -9,7 +9,33 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
       builder: (c, s) {
-        return Scaffold();
+        return Scaffold(
+          body: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: Center(
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextButton(
+                      style: TextButton.styleFrom(
+                        backgroundColor: Colors.white,
+                      ),
+                      child: Text(
+                        "Continue with Google",
+                        style: TextStyle(
+                          color: Colors.black,
+                        ),
+                      ),
+                      onPressed: () {
+                        c.read<UserBloc>().add(LoginUserEvent());
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
       },
       listener: (c, s) {},
     );

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:stori/constants.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({Key? key}) : super(key: key);
@@ -10,6 +12,17 @@ class InitPage extends StatefulWidget {
 class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      body: Center(
+        child: Text(
+          'Stori',
+          style: GoogleFonts.raleway(
+            fontSize: 40.0,
+            fontWeight: FontWeight.w900,
+            color: accentcolor,
+          ),
+        ),
+      ),
+    );
   }
 }

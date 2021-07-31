@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stori/models/UserModel.dart';
+import 'package:stori/services/auth.dart';
 
 // Events
 abstract class UserEvent {
@@ -11,8 +14,7 @@ class FetchUserEvent extends UserEvent {
 }
 
 class LoginUserEvent extends UserEvent {
-  final User user;
-  const LoginUserEvent({required this.user});
+  const LoginUserEvent();
 }
 
 class LogoutUserEvent extends UserEvent {
@@ -34,7 +36,7 @@ class LoadingUserState extends UserState {
 }
 
 class LoggedInUserState extends UserState {
-  final User user;
+  final AppUser user;
   const LoggedInUserState({required this.user});
 }
 
@@ -58,8 +60,49 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     if (event is FetchUserEvent) {
       yield LoadingUserState(loadingMessage: 'Fetching user...');
       try {
-        User _user = new User(displayName: '', uid: '', username: '');
-        yield LoggedInUserState(user: _user);
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        bool? isLoggedIn = _prefs.getBool('isLoggedIn');
+
+        if (isLoggedIn == true) {
+          User? user = await signInWithGoogle();
+          AppUser appUser = new AppUser(
+            displayName: user!.displayName,
+            uid: user.uid,
+            username: user.email,
+          );
+          yield LoggedInUserState(user: appUser);
+        } else {
+          yield LoggedOutUserState();
+        }
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is LoginUserEvent) {
+      yield LoadingUserState(loadingMessage: 'Logging in...');
+      try {
+        User? user = await signInWithGoogle();
+        AppUser appUser = new AppUser(
+          displayName: user!.displayName,
+          uid: user.uid,
+          username: user.email,
+        );
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        _prefs.setBool('isLoggedIn', true);
+
+        yield LoggedInUserState(user: appUser);
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is LogoutUserEvent) {
+      yield LoadingUserState(loadingMessage: 'Logging out...');
+      try {
+        await signOutGoogle();
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        _prefs.setBool('isLoggedIn', false);
+        yield LoggedOutUserState();
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

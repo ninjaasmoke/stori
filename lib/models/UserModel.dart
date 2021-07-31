@@ -1,9 +1,9 @@
-class User {
-  final String displayName;
-  final String username;
-  final String uid;
+class AppUser {
+  final String? displayName;
+  final String? username;
+  final String? uid;
 
-  User({
+  AppUser({
     required this.displayName,
     required this.username,
     required this.uid,
