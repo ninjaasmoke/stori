@@ -89,7 +89,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         String? uid = _prefs.getString('uid');
 
         if (isLoggedIn == true && uid != null && uid.isNotEmpty) {
-          print("User has logged in");
+          print("User is logged in");
           FireStoreService _fireStore = FireStoreService();
           AppUser appUser = await _fireStore.getUser(uid);
 
@@ -114,10 +114,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             username: user.displayName,
           );
           await _fireStore.addUser(_createUser);
-          SharedPreferences _prefs = await SharedPreferences.getInstance();
-
-          _prefs.setBool('isLoggedIn', true);
-          _prefs.setString('uid', user.uid);
 
           AppUser _user = new AppUser(
             displayName: user.displayName,
@@ -129,6 +125,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         } else {
           yield LoggedInUserState(user: _appUser);
         }
+        SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        _prefs.setBool('isLoggedIn', true);
+        _prefs.setString('uid', user.uid);
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

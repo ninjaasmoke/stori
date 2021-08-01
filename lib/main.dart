@@ -54,12 +54,10 @@ class MyApp extends StatelessWidget {
             if (state is LoggedInUserState) {
               return AppPage();
             }
-            if (state is LoggedOutUserState ||
-                state is ErrorUserState ||
-                state is LoggingInUserState) {
+            if (state is LoggedOutUserState || state is LoggingInUserState) {
               return LoginPage();
             }
-            return LoginPage();
+            return InitPage();
           },
           listener: (context, state) {
             if (res != ConnectivityResult.none) {
