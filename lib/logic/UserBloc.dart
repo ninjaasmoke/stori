@@ -71,7 +71,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         bool? isLoggedIn = _prefs.getBool('isLoggedIn');
         String? uid = _prefs.getString('uid');
 
-        if (isLoggedIn == true) {
+        if (isLoggedIn == true && uid != null && uid.isNotEmpty) {
           print("User has logged in");
           FireStoreService _fireStore = FireStoreService();
           AppUser appUser = await _fireStore.getUser(uid);
