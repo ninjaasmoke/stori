@@ -1,9 +1,11 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share/share.dart';
 import 'package:stori/components/CustomCachedImage.dart';
+import 'package:stori/components/CustomPopUp.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/helper/utils.dart';
@@ -27,7 +29,7 @@ class ProfilePage extends StatelessWidget {
       listener: (context, state) {
         if (state is LoggingOutUserState) {
           ScaffoldMessenger.of(context).showSnackBar(
-            customSnackBar(text: state.loggingOutMessage, milli: 2000),
+            customSnackBar(text: state.loggingOutMessage, milli: 200),
           );
         }
         if (state is LoggedOutUserState) {
@@ -53,19 +55,7 @@ class ProfilePage extends StatelessWidget {
       children: [
         _profileBanner(user.photoURL, user.username),
         _tellFriendsBanner(context),
-        // Create a logout button
-        ListTile(
-          onTap: () {
-            context.read<UserBloc>().add(LogoutUserEvent());
-          },
-          title: Text(
-            'Sign Out',
-            style: TextStyle(
-              color: tertiaryTextColor,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
+        _signoutButton(context),
       ],
     );
   }
@@ -164,10 +154,11 @@ class ProfilePage extends StatelessWidget {
             children: [
               Icon(
                 Icons.message_rounded,
+                size: 18.0,
                 color: secondaryTextColor,
               ),
               SizedBox(
-                width: 8.0,
+                width: 12.0,
               ),
               Text(
                 "Tell friends about Stori.",
@@ -180,7 +171,7 @@ class ProfilePage extends StatelessWidget {
             ],
           ),
           SizedBox(
-            height: 12.0,
+            height: 16.0,
           ),
           Text(
             "Share so friends can hear about the books you have and can tell you about the books they have.",
@@ -189,7 +180,7 @@ class ProfilePage extends StatelessWidget {
             ),
           ),
           SizedBox(
-            height: 12.0,
+            height: 16.0,
           ),
           _copyLink(),
           TextButton.icon(
@@ -197,12 +188,12 @@ class ProfilePage extends StatelessWidget {
               onShareData(context, "Stori", SHARE_LINK);
             },
             icon: Icon(
-              Icons.share,
+              CupertinoIcons.share,
               color: secondaryTextColor,
-              size: 16,
+              size: 17,
             ),
             label: Text(
-              "Share",
+              "Share Link",
               style: TextStyle(
                 color: secondaryTextColor,
               ),
@@ -212,6 +203,68 @@ class ProfilePage extends StatelessWidget {
             height: 4.0,
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _signoutButton(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        // context.read<UserBloc>().add(LogoutUserEvent());
+        showOverlay(
+          context: context,
+          widgets: [
+            Text(
+              "Are you sure you want to sign out?",
+              style: TextStyle(
+                color: secondaryTextColor,
+              ),
+            ),
+            SizedBox(
+              height: 20.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
+                    child: Text(
+                      "Cancel",
+                      style: TextStyle(color: secondaryTextColor),
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    context.read<UserBloc>().add(LogoutUserEvent());
+                  },
+                  child: Padding(
+                    padding:
+                        EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
+                    child: Text(
+                      "Sign Out",
+                      style: TextStyle(color: secondaryTextColor),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          ],
+          barrierDismiss: false,
+        );
+      },
+      title: Text(
+        'Sign Out',
+        style: TextStyle(
+          color: tertiaryTextColor,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }

@@ -73,7 +73,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       try {
         SharedPreferences _prefs = await SharedPreferences.getInstance();
 
-        User? _user = await signInWithGoogle();
+        // User? _user = await signInWithGoogle();
 
         bool? isLoggedIn = _prefs.getBool('isLoggedIn');
         String? uid = _prefs.getString('uid');
