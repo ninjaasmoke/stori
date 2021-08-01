@@ -5,7 +5,7 @@ import 'package:stori/models/BookModel.dart';
 
 Widget bookCard(BookModel book) {
   return CachedNetworkImage(
-    imageUrl: book.imageUrl.isEmpty ? NOT_FOUND_URL : book.imageUrl,
+    imageUrl: book.imageUrl.isEmpty ? IMAGE_NOT_FOUND_URL : book.imageUrl,
     placeholder: (context, url) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6.0),

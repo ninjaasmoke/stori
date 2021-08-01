@@ -20,8 +20,8 @@ const String TITLE_FONT = 'title';
 const String BOOKS_GOOGLE_URI_V1 =
     'https://www.googleapis.com/books/v1/volumes';
 
-const String NOT_FOUND_URL =
+const String IMAGE_NOT_FOUND_URL =
     "https://i.pinimg.com/originals/51/0f/49/510f4957de3eb14c591fddb875ae9c94.jpg";
 
-const String NOT_FOUND_URL2 =
+const String IMAGE_NOT_FOUND_URL2 =
     "https://i.pinimg.com/564x/fd/78/c4/fd78c47f2a009df65b5b5a46f4437399.jpg";
