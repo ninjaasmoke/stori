@@ -6,7 +6,7 @@ import 'package:stori/components/CustomPopUp.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/helper/utils.dart';
-import 'package:stori/logic/UserBloc.dart';
+import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/UserModel.dart';
 
 class ProfilePage extends StatelessWidget {

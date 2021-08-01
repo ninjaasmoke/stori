@@ -1,9 +1,14 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:stori/components/BookCard.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
-import 'package:stori/logic/UserBloc.dart';
+import 'package:stori/logic/RecomendedBooksBloc.dart';
+import 'package:stori/logic/UserLogic.dart';
+import 'package:stori/models/BookModel.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
 
@@ -23,6 +28,7 @@ class _AppPageState extends State<AppPage> {
           return Scaffold(
             appBar: _appBar(s.user.photoURL),
             body: _body(c, s),
+            extendBodyBehindAppBar: true,
           );
         }
         return Center(
@@ -35,7 +41,7 @@ class _AppPageState extends State<AppPage> {
 
   AppBar _appBar(String? url) {
     return AppBar(
-      backgroundColor: Colors.transparent,
+      backgroundColor: Colors.black87,
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: false,
@@ -88,10 +94,76 @@ class _AppPageState extends State<AppPage> {
     );
   }
 
-  Widget _body(BuildContext c, LoggedInUserState s) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [],
+  Widget _body(BuildContext userContext, LoggedInUserState userState) {
+    return BlocBuilder<RecBooksBloc, RecBooksState>(
+      builder: (context, state) {
+        if (state is LoadedRecBooksState)
+          return SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                ),
+                _booksRow(state.fiction, 'Fiction'),
+                _booksRow(state.adventure, 'Adventure'),
+                _booksRow(state.life, 'Life'),
+                _booksRow(state.indian, 'Indian'),
+                _booksRow(state.culture, 'Culture'),
+                _booksRow(state.scientific, 'Scientific'),
+                _booksRow(state.children, 'Children'),
+              ],
+            ),
+          );
+        return Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(accentcolor),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _booksRow(List<BookModel> books, String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            height: 12.0,
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+            child: Text(
+              title,
+              style: TextStyle(
+                color: primaryTextColor,
+                fontSize: 22.0,
+                fontWeight: FontWeight.w900,
+                fontFamily:
+                    GoogleFonts.raleway(fontWeight: FontWeight.w800).fontFamily,
+              ),
+            ),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: books
+                  .map(
+                    (book) => Container(
+                      margin: EdgeInsets.only(right: 8.0),
+                      child: bookCard(book),
+                      height: 172,
+                      width: 122,
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

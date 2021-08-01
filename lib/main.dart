@@ -5,8 +5,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
+import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
-import 'package:stori/logic/UserBloc.dart';
+import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';
 import 'package:stori/pages/Login.dart';
@@ -29,6 +30,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<UserBloc>(
           create: (context) => UserBloc()..add(FetchUserEvent()),
+        ),
+        BlocProvider<RecBooksBloc>(
+          create: (context) => RecBooksBloc()..add(FetchRecBooksEvent()),
         ),
         BlocProvider<SearchBooksBloc>(
           create: (context) => SearchBooksBloc(),
