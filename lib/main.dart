@@ -5,7 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
-import 'package:stori/logic/BooksLogic.dart';
+import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/UserBloc.dart';
 import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';

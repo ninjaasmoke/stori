@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/components/BookCard.dart';
 import 'package:stori/constants.dart';
-import 'package:stori/logic/BooksLogic.dart';
+import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/models/BookModel.dart';
 
 class SearchPage extends StatefulWidget {
