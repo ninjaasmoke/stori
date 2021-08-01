@@ -81,7 +81,7 @@ class LoginPage extends StatelessWidget {
               child: Text(
                 "Continue with Google",
                 style: TextStyle(
-                  color: secondaryTextColor,
+                  color: darkTextColor,
                   fontWeight: FontWeight.w600,
                   fontSize: 16.0,
                 ),

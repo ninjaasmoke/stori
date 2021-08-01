@@ -41,6 +41,11 @@ class LoggingInUserState extends UserState {
   const LoggingInUserState({required this.loggingInMessage});
 }
 
+class LoggingOutUserState extends UserState {
+  final String loggingOutMessage;
+  const LoggingOutUserState({required this.loggingOutMessage});
+}
+
 class LoggedInUserState extends UserState {
   final AppUser user;
   const LoggedInUserState({required this.user});
@@ -67,6 +72,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield LoadingUserState(loadingMessage: 'Fetching user...');
       try {
         SharedPreferences _prefs = await SharedPreferences.getInstance();
+
+        User? _user = await signInWithGoogle();
 
         bool? isLoggedIn = _prefs.getBool('isLoggedIn');
         String? uid = _prefs.getString('uid');
@@ -105,7 +112,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is LogoutUserEvent) {
-      yield LoadingUserState(loadingMessage: 'Logging out...');
+      yield LoggingOutUserState(loggingOutMessage: 'Logging out...');
       try {
         await signOutGoogle();
         SharedPreferences _prefs = await SharedPreferences.getInstance();

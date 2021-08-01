@@ -12,7 +12,7 @@ Widget customCachedNetworkImage({required String url, String title = ""}) {
         ),
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(tileColor),
+            valueColor: AlwaysStoppedAnimation<Color>(tertiaryTextColor),
           ),
         )),
     imageBuilder: (context, imageProvider) => Container(
@@ -38,7 +38,7 @@ Widget customCachedNetworkImage({required String url, String title = ""}) {
     errorWidget: (context, url, error) => Container(
         child: Icon(
       Icons.emoji_emotions,
-      color: accentcolor,
+      color: primaryTextColor,
     )),
   );
 }

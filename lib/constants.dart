@@ -6,11 +6,13 @@ final Color snackBarcolor = new Color(0xFF181818);
 final Color scaffoldBGColor = new Color(0xFF000000);
 final Color appBarBGColor = new Color(0xFF080808);
 
-final Color primaryTextColor = new Color(0xFFFFFFFF);
-final Color secondaryTextColor = Color(0xff181818);
+final Color primaryTextColor = new Color(0xFFEFEFEF);
+final Color secondaryTextColor = Color(0xffCECECE);
 final Color tertiaryTextColor = Colors.grey;
 
-final Color tileColor = Colors.grey.shade800;
+final Color darkTextColor = Color(0xFF000000);
+
+final Color tileColor = Color(0xff181818);
 final Color searchBarColor = Color(0xff242424);
 
 final Color lightIconColor = Colors.grey;
@@ -25,3 +27,7 @@ const String IMAGE_NOT_FOUND_URL =
 
 const String IMAGE_NOT_FOUND_URL2 =
     "https://i.pinimg.com/564x/fd/78/c4/fd78c47f2a009df65b5b5a46f4437399.jpg";
+
+const String COPY_LINK_URL = "https://ninjaasmoke.tech/";
+
+const String SHARE_LINK = "https://ninjaasmoke.tech/";
