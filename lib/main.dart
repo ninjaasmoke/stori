@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/SnackBarWidget.dart';
@@ -38,59 +39,65 @@ class MyApp extends StatelessWidget {
           create: (context) => SearchBooksBloc(),
         ),
       ],
-      child: MaterialApp(
-        title: 'Stori',
-        theme: ThemeData(
-          scaffoldBackgroundColor: Colors.black,
-          accentColor: accentcolor,
-          primaryColor: accentcolor,
-          fontFamily: GoogleFonts.poppins().fontFamily,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.dark,
         ),
-        debugShowCheckedModeBanner: false,
-        home: BlocConsumer<UserBloc, UserState>(
-          builder: (context, state) {
-            if (res == ConnectivityResult.none) {
-              return NoConnectivityPage();
-            }
-            if (state is InitUserState || state is LoadingUserState) {
-              return InitPage();
-            }
-            if (state is LoggedInUserState) {
-              return AppPage();
-            }
-            if (state is LoggedOutUserState || state is LoggingInUserState) {
-              return LoginPage();
-            }
-            return InitPage();
-          },
-          listener: (context, state) {
-            if (res != ConnectivityResult.none) {
-              if (state is LoadingUserState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customSnackBar(text: "Loading..."),
-                );
-              } else if (state is ErrorUserState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customSnackBar(text: state.errorMessage, milli: 10000),
-                );
-              } else if (state is LoggingInUserState) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customSnackBar(text: 'Logging in...', milli: 10000),
-                );
-              } else if (state is LoggedInUserState) {
-                ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                ScaffoldMessenger.of(context).showSnackBar(
-                  customSnackBar(
-                    text: "Welcome ${state.user.username}",
-                    milli: 2000,
-                  ),
-                );
+        child: MaterialApp(
+          title: 'Stori',
+          theme: ThemeData(
+            scaffoldBackgroundColor: Colors.black,
+            accentColor: accentcolor,
+            primaryColor: accentcolor,
+            fontFamily: GoogleFonts.poppins().fontFamily,
+          ),
+          debugShowCheckedModeBanner: false,
+          home: BlocConsumer<UserBloc, UserState>(
+            builder: (context, state) {
+              if (res == ConnectivityResult.none) {
+                return NoConnectivityPage();
               }
-              //  else if (state is LoggedOutUserState) {
+              if (state is InitUserState || state is LoadingUserState) {
+                return InitPage();
+              }
+              if (state is LoggedInUserState) {
+                return AppPage();
+              }
+              if (state is LoggedOutUserState || state is LoggingInUserState) {
+                return LoginPage();
+              }
+              return InitPage();
+            },
+            listener: (context, state) {
+              if (res != ConnectivityResult.none) {
+                if (state is LoadingUserState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnackBar(text: "Loading..."),
+                  );
+                } else if (state is ErrorUserState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnackBar(text: state.errorMessage, milli: 10000),
+                  );
+                } else if (state is LoggingInUserState) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnackBar(text: 'Logging in...', milli: 10000),
+                  );
+                } else if (state is LoggedInUserState) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnackBar(
+                      text: "Welcome ${state.user.username}",
+                      milli: 2000,
+                    ),
+                  );
+                }
+                //  else if (state is LoggedOutUserState) {
 
-              // }
-            }
-          },
+                // }
+              }
+            },
+          ),
         ),
       ),
     );

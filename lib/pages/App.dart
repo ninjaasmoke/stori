@@ -1,14 +1,13 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/BookCard.dart';
-import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/BookModel.dart';
+import 'package:stori/pages/Book.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
 
@@ -106,13 +105,12 @@ class _AppPageState extends State<AppPage> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.1,
                 ),
-                _booksRow(state.fiction, 'Fiction'),
-                _booksRow(state.adventure, 'Adventure'),
-                _booksRow(state.life, 'Life'),
-                _booksRow(state.indian, 'Indian'),
-                _booksRow(state.culture, 'Culture'),
-                _booksRow(state.scientific, 'Scientific'),
-                _booksRow(state.children, 'Children'),
+                Column(
+                  children: state.booksList
+                      .map((e) => _booksRow(
+                          e, state.topics[state.booksList.indexOf(e)]))
+                      .toList(),
+                )
               ],
             ),
           );
@@ -137,7 +135,7 @@ class _AppPageState extends State<AppPage> {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
             child: Text(
-              title,
+              title.replaceFirst(title[0], title[0].toUpperCase()),
               style: TextStyle(
                 color: primaryTextColor,
                 fontSize: 22.0,
@@ -152,11 +150,22 @@ class _AppPageState extends State<AppPage> {
             child: Row(
               children: books
                   .map(
-                    (book) => Container(
-                      margin: EdgeInsets.only(right: 8.0),
-                      child: bookCard(book),
-                      height: 172,
-                      width: 122,
+                    (book) => GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (context) => BookPage(book: book),
+                            fullscreenDialog: true,
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(right: 8.0),
+                        child: bookCard(book),
+                        height: 172,
+                        width: 122,
+                      ),
                     ),
                   )
                   .toList(),

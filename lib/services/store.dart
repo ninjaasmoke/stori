@@ -40,4 +40,10 @@ class FireStoreService {
       throw Error();
     });
   }
+
+  Future<List<String>> getTopics() async {
+    QuerySnapshot<Map<String, dynamic>> res =
+        await _firestoreInstance.collection("topics").get();
+    return res.docs.map((d) => d.id).toList();
+  }
 }
