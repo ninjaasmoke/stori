@@ -107,7 +107,6 @@ class ProfilePage extends StatelessWidget {
                 widgets: [
                   Container(
                     decoration: BoxDecoration(
-                      color: searchBarColor,
                       borderRadius: BorderRadius.circular(4.0),
                     ),
                     child: TextField(
@@ -120,8 +119,8 @@ class ProfilePage extends StatelessWidget {
                       decoration: InputDecoration(
                         contentPadding:
                             EdgeInsets.symmetric(vertical: 4, horizontal: 12),
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide.none,
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: BorderSide(color: searchBarColor),
                         ),
                       ),
                     ),
@@ -143,6 +142,8 @@ class ProfilePage extends StatelessWidget {
                         context
                             .read<UserBloc>()
                             .add(UpdateUserEvent(appUser: _updatedUser));
+                      } else {
+                        Navigator.pop(context);
                       }
                     },
                     child: Padding(
@@ -332,6 +333,7 @@ class ProfilePage extends StatelessWidget {
         style: TextStyle(
           color: tertiaryTextColor,
           fontWeight: FontWeight.bold,
+          fontSize: 14.0,
         ),
       ),
     );

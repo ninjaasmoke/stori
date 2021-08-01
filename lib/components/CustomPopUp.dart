@@ -14,7 +14,7 @@ showOverlay({
         child: Opacity(
           opacity: a1.value,
           child: AlertDialog(
-            backgroundColor: tileColor,
+            backgroundColor: scaffoldBGColor,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8.0)),
             content: Column(

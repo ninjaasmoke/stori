@@ -70,7 +70,21 @@ class _SearchPageState extends State<SearchPage> {
           SizedBox(
             height: 12.0,
           ),
-          _searchResults(books), // TODO : else render popular searches
+          Container(
+            color: tileColor,
+            width: MediaQuery.of(context).size.width,
+            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            child: Text(
+              "Top results will be shown here",
+              style: TextStyle(
+                color: primaryTextColor,
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 12.0,
+          ),
+          _searchResults(books),
           if (s is ErrorSearchBooksState)
             Padding(
               padding: const EdgeInsets.all(20.0),
@@ -92,8 +106,9 @@ class _SearchPageState extends State<SearchPage> {
     return Container(
       height: MediaQuery.of(context).size.height * 0.9,
       width: MediaQuery.of(context).size.width,
-      padding: new EdgeInsets.only(bottom: 78),
+      padding: new EdgeInsets.only(bottom: 122),
       child: GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 8),
         physics: BouncingScrollPhysics(),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisSpacing: 4.0,

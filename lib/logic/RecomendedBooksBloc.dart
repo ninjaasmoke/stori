@@ -60,6 +60,11 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
         String titleBookOfDay = await (fireStoreService.getBookOfDay());
         BookModel bookOfDay =
             await booksClient.getBook(pattern: titleBookOfDay);
+        yield LoadedRecBooksState(
+          topics: topics,
+          bookOfDay: bookOfDay,
+          booksList: booksTopics,
+        );
         for (var topic in topics) {
           booksTopics.add(
             await booksClient.getBooks(

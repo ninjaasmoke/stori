@@ -29,6 +29,34 @@ class BookPage extends StatelessWidget {
         children: [
           _banner(book, context),
           _details(book, context),
+          DefaultTabController(
+            length: 2,
+            child: Column(
+              children: [
+                TabBar(
+                  labelColor: primaryTextColor,
+                  indicatorColor: accentcolor,
+                  tabs: [
+                    Tab(
+                      text: 'Details',
+                    ),
+                    Tab(
+                      text: 'More Like This',
+                    ),
+                  ],
+                ),
+                Container(
+                  height: MediaQuery.of(context).size.height * 0.8,
+                  child: TabBarView(
+                    children: [
+                      _desc(book, context),
+                      Container(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -186,6 +214,18 @@ class BookPage extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _desc(BookModel book, BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(12),
+      child: Text(
+        book.description,
+        style: TextStyle(
+          color: primaryTextColor,
+        ),
       ),
     );
   }
