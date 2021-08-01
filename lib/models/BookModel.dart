@@ -32,7 +32,8 @@ class BookModel {
       id: json["id"],
       title: json["volumeInfo"]["title"] ?? "",
       subTitle: json["volumeInfo"]["subtitle"] ?? "",
-      authors: json["volumeInfo"]["authors"] ?? [],
+      authors:
+          json["volumeInfo"] != null ? json["volumeInfo"]["authors"] ?? [] : [],
       publisher: json["volumeInfo"]["publisher"] ?? "",
       publishedDate: json["volumeInfo"]["publishedDate"] ?? "",
       description: json["volumeInfo"]["description"] ?? "",

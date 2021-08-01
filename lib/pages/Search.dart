@@ -70,6 +70,18 @@ class _SearchPageState extends State<SearchPage> {
             height: 12.0,
           ),
           _searchResults(books), // TODO : else render popular searches
+          if (s is ErrorSearchBooksState)
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Center(
+                child: Text(
+                  s.errorMessage,
+                  style: TextStyle(
+                    color: accentcolor,
+                  ),
+                ),
+              ),
+            )
         ],
       ),
     );
