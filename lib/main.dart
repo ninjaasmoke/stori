@@ -26,8 +26,8 @@ class MyApp extends StatelessWidget {
         BlocProvider<UserBloc>(
           create: (context) => UserBloc()..add(FetchUserEvent()),
         ),
-        BlocProvider<BooksBloc>(
-          create: (context) => BooksBloc(),
+        BlocProvider<SearchBooksBloc>(
+          create: (context) => SearchBooksBloc(),
         ),
       ],
       child: MaterialApp(

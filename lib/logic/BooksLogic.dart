@@ -2,63 +2,63 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/models/BookModel.dart';
 import 'package:stori/services/books.dart';
 
-abstract class BooksEvent {
-  const BooksEvent();
+abstract class SearchBooksEvent {
+  const SearchBooksEvent();
 }
 
-class SearchBooksEvent extends BooksEvent {
+class SearchSearchBooksEvent extends SearchBooksEvent {
   final String pattern;
-  const SearchBooksEvent({required this.pattern});
+  const SearchSearchBooksEvent({required this.pattern});
 }
 
-abstract class BooksState {
-  const BooksState();
+abstract class SearchBooksState {
+  const SearchBooksState();
 }
 
-class InitBooksState extends BooksState {
-  const InitBooksState();
+class InitSearchBooksState extends SearchBooksState {
+  const InitSearchBooksState();
 }
 
-class LoadingBooksState extends BooksState {
+class LoadingSearchBooksState extends SearchBooksState {
   final String loadingMessage;
-  const LoadingBooksState({required this.loadingMessage});
+  const LoadingSearchBooksState({required this.loadingMessage});
 }
 
-class SearchBooksState extends BooksState {
+class SearchSearchBooksState extends SearchBooksState {
   final List<BookModel> books;
-  const SearchBooksState({required this.books});
+  const SearchSearchBooksState({required this.books});
 }
 
-class RecomendedBooksState extends BooksState {
+class RecomendedSearchBooksState extends SearchBooksState {
   final List<BookModel> books;
-  const RecomendedBooksState({required this.books});
+  const RecomendedSearchBooksState({required this.books});
 }
 
-class ErrorBooksState extends BooksState {
+class ErrorSearchBooksState extends SearchBooksState {
   final String errorMessage;
-  const ErrorBooksState({required this.errorMessage});
+  const ErrorSearchBooksState({required this.errorMessage});
 }
 
-class BooksBloc extends Bloc<BooksEvent, BooksState> {
-  BooksBloc() : super(InitBooksState());
+class SearchBooksBloc extends Bloc<SearchBooksEvent, SearchBooksState> {
+  SearchBooksBloc() : super(InitSearchBooksState());
 
   List<BookModel> searchBooks = [];
 
   @override
-  Stream<BooksState> mapEventToState(BooksEvent event) async* {
-    if (event is SearchBooksEvent) {
-      // yield LoadingBooksState(loadingMessage: 'Searching...');
+  Stream<SearchBooksState> mapEventToState(SearchBooksEvent event) async* {
+    if (event is SearchSearchBooksEvent) {
+      // yield LoadingSearchBooksState(loadingMessage: 'Searching...');
       try {
         // TODO
         List<BookModel> books =
             await BooksClient().getBooks(pattern: event.pattern);
         if (books.length != 0) {
-          yield SearchBooksState(books: books);
+          yield SearchSearchBooksState(books: books);
         } else {
-          yield ErrorBooksState(errorMessage: 'No books found');
+          yield ErrorSearchBooksState(errorMessage: 'No books found');
         }
       } catch (e) {
-        yield ErrorBooksState(errorMessage: e.toString());
+        yield ErrorSearchBooksState(errorMessage: e.toString());
       }
     }
   }

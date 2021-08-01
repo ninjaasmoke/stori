@@ -40,9 +40,9 @@ class _SearchPageState extends State<SearchPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: _appBar(),
-      body: BlocConsumer<BooksBloc, BooksState>(
+      body: BlocConsumer<SearchBooksBloc, SearchBooksState>(
         builder: (context, state) {
-          if (state is SearchBooksState) {
+          if (state is SearchSearchBooksState) {
             books = state.books;
           }
           return _body(state);
@@ -60,7 +60,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _body(BooksState s) {
+  Widget _body(SearchBooksState s) {
     return SingleChildScrollView(
       physics: NeverScrollableScrollPhysics(),
       child: Column(
@@ -126,8 +126,8 @@ class _SearchPageState extends State<SearchPage> {
                 onSubmitted: (String pattern) {
                   if (pattern.isNotEmpty)
                     context
-                        .read<BooksBloc>()
-                        .add(SearchBooksEvent(pattern: pattern));
+                        .read<SearchBooksBloc>()
+                        .add(SearchSearchBooksEvent(pattern: pattern));
                 },
                 focusNode: _focus,
                 controller: _controller,
