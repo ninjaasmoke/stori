@@ -22,6 +22,11 @@ class LogoutUserEvent extends UserEvent {
   const LogoutUserEvent();
 }
 
+class UpdateUserEvent extends UserEvent {
+  final AppUser appUser;
+  const UpdateUserEvent({required this.appUser});
+}
+
 // States
 abstract class UserState {
   const UserState();
@@ -55,6 +60,11 @@ class LoggedOutUserState extends UserState {
   const LoggedOutUserState();
 }
 
+class UpdatingUserState extends UserState {
+  final String updatingMessage;
+  const UpdatingUserState({required this.updatingMessage});
+}
+
 class ErrorUserState extends UserState {
   final String errorMessage;
   const ErrorUserState({required this.errorMessage});
@@ -82,7 +92,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           print("User has logged in");
           FireStoreService _fireStore = FireStoreService();
           AppUser appUser = await _fireStore.getUser(uid);
-          print(appUser);
+
           yield LoggedInUserState(user: appUser);
         } else {
           yield LoggedOutUserState();
@@ -120,6 +130,17 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         _prefs.setBool('isLoggedIn', false);
         _prefs.setString('uid', "");
         yield LoggedOutUserState();
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is UpdateUserEvent) {
+      yield UpdatingUserState(updatingMessage: 'Updating user...');
+
+      try {
+        // TODO
+        FireStoreService _fireStore = FireStoreService();
+        await _fireStore.updateUser(event.appUser);
+        yield LoggedInUserState(user: event.appUser);
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

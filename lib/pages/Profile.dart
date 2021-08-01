@@ -1,9 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:share/share.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/components/CustomPopUp.dart';
 import 'package:stori/components/SnackBarWidget.dart';
@@ -20,11 +17,11 @@ class ProfilePage extends StatelessWidget {
     return BlocConsumer<UserBloc, UserState>(
       builder: (context, state) {
         return Scaffold(
-          appBar: _appBar(),
-          body: state is LoggedInUserState
-              ? _body(context, state.user)
-              : Center(),
-        );
+            appBar: _appBar(),
+            body: _body(
+              context,
+              state,
+            ));
       },
       listener: (context, state) {
         if (state is LoggingOutUserState) {
@@ -50,17 +47,28 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  Widget _body(BuildContext context, AppUser user) {
-    return Column(
-      children: [
-        _profileBanner(user.photoURL, user.username),
-        _tellFriendsBanner(context),
-        _signoutButton(context),
-      ],
+  Widget _body(BuildContext context, UserState state) {
+    return SingleChildScrollView(
+      physics: NeverScrollableScrollPhysics(),
+      child: Column(
+        children: [
+          state is LoggedInUserState
+              ? _profileBanner(state.user, context)
+              : Container(
+                  height: 204,
+                  alignment: Alignment.center,
+                  child: CircularProgressIndicator(
+                    valueColor: AlwaysStoppedAnimation<Color>(accentcolor),
+                  ),
+                ),
+          _tellFriendsBanner(context),
+          _signoutButton(context),
+        ],
+      ),
     );
   }
 
-  Widget _profileBanner(String? userPhoto, String? userName) {
+  Widget _profileBanner(AppUser user, BuildContext context) {
     return Container(
       color: scaffoldBGColor,
       alignment: Alignment.center,
@@ -75,7 +83,7 @@ class ProfilePage extends StatelessWidget {
             child: Center(
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: customCachedNetworkImage(url: userPhoto!),
+                child: customCachedNetworkImage(url: user.photoURL!),
               ),
             ),
           ),
@@ -83,13 +91,73 @@ class ProfilePage extends StatelessWidget {
             height: 20.0,
           ),
           Text(
-            userName!,
+            user.username!,
             style: TextStyle(
               color: secondaryTextColor,
             ),
           ),
           TextButton.icon(
-            onPressed: () {},
+            onPressed: () {
+              TextEditingController _usernameController =
+                  new TextEditingController(
+                text: user.username,
+              );
+              showOverlay(
+                context: context,
+                widgets: [
+                  Container(
+                    decoration: BoxDecoration(
+                      color: searchBarColor,
+                      borderRadius: BorderRadius.circular(4.0),
+                    ),
+                    child: TextField(
+                      controller: _usernameController,
+                      autofocus: true,
+                      style: TextStyle(
+                        color: primaryTextColor,
+                      ),
+                      cursorColor: primaryTextColor,
+                      decoration: InputDecoration(
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 12.0,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      if (_usernameController.text.length > 0 &&
+                          _usernameController.text != user.username) {
+                        AppUser _updatedUser = AppUser(
+                          displayName: user.displayName,
+                          username: _usernameController.text,
+                          uid: user.uid,
+                          photoURL: user.photoURL,
+                        );
+                        Navigator.pop(context);
+                        context
+                            .read<UserBloc>()
+                            .add(UpdateUserEvent(appUser: _updatedUser));
+                      }
+                    },
+                    child: Padding(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
+                      child: Text(
+                        "Update",
+                        style: TextStyle(color: accentcolor),
+                      ),
+                    ),
+                  ),
+                ],
+                barrierDismiss: false,
+              );
+            },
             icon: Icon(
               Icons.edit,
               color: tertiaryTextColor,
@@ -249,7 +317,7 @@ class ProfilePage extends StatelessWidget {
                         EdgeInsets.symmetric(vertical: 0, horizontal: 12.0),
                     child: Text(
                       "Sign Out",
-                      style: TextStyle(color: secondaryTextColor),
+                      style: TextStyle(color: accentcolor),
                     ),
                   ),
                 ),

@@ -24,4 +24,20 @@ class FireStoreService {
       throw Error();
     });
   }
+
+  Future updateUser(AppUser user) async {
+    /// this overrites the entire user object
+    /// find a way to update only the changed fields
+
+    Map<String, dynamic> userObject = user.toJson();
+    await _firestoreInstance
+        .collection("users")
+        .doc(user.uid)
+        .update(userObject)
+        .whenComplete(() {
+      return user;
+    }).catchError((e) {
+      throw Error();
+    });
+  }
 }
