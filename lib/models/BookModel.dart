@@ -5,6 +5,7 @@ class BookModel {
   final String title;
   final String subTitle;
   final List<dynamic> authors;
+  final List<dynamic> categories;
   final String publisher;
   final String publishedDate;
   final String description;
@@ -18,6 +19,7 @@ class BookModel {
     required this.title,
     required this.subTitle,
     required this.authors,
+    required this.categories,
     required this.publisher,
     required this.publishedDate,
     required this.description,
@@ -34,6 +36,9 @@ class BookModel {
       subTitle: json["volumeInfo"]["subtitle"] ?? "",
       authors:
           json["volumeInfo"] != null ? json["volumeInfo"]["authors"] ?? [] : [],
+      categories: json["volumeInfo"] != null
+          ? json["volumeInfo"]["categories"] ?? []
+          : [],
       publisher: json["volumeInfo"]["publisher"] ?? "",
       publishedDate: json["volumeInfo"]["publishedDate"] ?? "",
       description: json["volumeInfo"]["description"] ?? "",
