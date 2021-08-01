@@ -104,20 +104,31 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield LoggingInUserState(loggingInMessage: 'Logging in...');
       try {
         User? user = await signInWithGoogle();
-        AppUser appUser = new AppUser(
-          displayName: user!.displayName,
-          uid: user.uid,
-          username: user.displayName,
-          photoURL: user.photoURL,
-        );
         FireStoreService _fireStore = FireStoreService();
-        await _fireStore.addUser(appUser);
-        SharedPreferences _prefs = await SharedPreferences.getInstance();
+        AppUser _appUser = await _fireStore.getUser(user!.uid);
+        if (_appUser.uid == null || _appUser.uid!.isEmpty) {
+          AppUser _createUser = new AppUser(
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            uid: user.uid,
+            username: user.displayName,
+          );
+          await _fireStore.addUser(_createUser);
+          SharedPreferences _prefs = await SharedPreferences.getInstance();
 
-        _prefs.setBool('isLoggedIn', true);
-        _prefs.setString('uid', user.uid);
+          _prefs.setBool('isLoggedIn', true);
+          _prefs.setString('uid', user.uid);
 
-        yield LoggedInUserState(user: appUser);
+          AppUser _user = new AppUser(
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            uid: user.uid,
+            username: user.displayName,
+          );
+          yield LoggedInUserState(user: _user);
+        } else {
+          yield LoggedInUserState(user: _appUser);
+        }
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

@@ -69,7 +69,9 @@ class _AppPageState extends State<AppPage> {
             padding: const EdgeInsets.all(2.0),
             child: CircleAvatar(
               radius: 18.0,
-              backgroundImage: NetworkImage(url!),
+              backgroundImage: url != null
+                  ? NetworkImage(url)
+                  : NetworkImage(IMAGE_NOT_FOUND_URL),
               backgroundColor: Colors.transparent,
             ),
           ),
