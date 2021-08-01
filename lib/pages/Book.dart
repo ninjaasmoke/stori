@@ -46,11 +46,18 @@ class BookPage extends StatelessWidget {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.8,
+                  height: MediaQuery.of(context).size.height * 0.9,
                   child: TabBarView(
                     children: [
                       _desc(book, context),
-                      Container(),
+                      Column(
+                        children: [
+                          Text(
+                            "\nwork in progress...",
+                            style: TextStyle(color: tertiaryTextColor),
+                          )
+                        ],
+                      )
                     ],
                   ),
                 ),
@@ -122,17 +129,10 @@ class BookPage extends StatelessWidget {
                         color: primaryTextColor,
                       ),
                     ),
-                  Row(
-                    children: book.authors
-                        .map(
-                          (author) => Text(
-                            "\t\t" + author,
-                            style: TextStyle(
-                              color: primaryTextColor,
-                            ),
-                          ),
-                        )
-                        .toList(),
+                  Text(
+                    "\t\t" +
+                        (book.authors.isNotEmpty ? book.authors[0] : "Unkown"),
+                    style: TextStyle(color: primaryTextColor),
                   ),
                 ],
               ),
@@ -186,6 +186,9 @@ class BookPage extends StatelessWidget {
               fontWeight: FontWeight.w900,
             ),
           ),
+          SizedBox(
+            height: 12.0,
+          ),
           Text(
             book.subTitle,
             style: TextStyle(
@@ -205,6 +208,24 @@ class BookPage extends StatelessWidget {
           ),
           SizedBox(
             height: 12.0,
+          ),
+          Wrap(
+            direction: Axis.horizontal,
+            children: book.authors
+                .map(
+                  (author) => Text(
+                    "\t•\t" + author,
+                    style: TextStyle(
+                      color: primaryTextColor,
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          Divider(
+            height: 40.0,
+            color: searchBarColor,
+            thickness: 1,
           ),
           Text(
             parse(book.snippet).body!.innerHtml,
