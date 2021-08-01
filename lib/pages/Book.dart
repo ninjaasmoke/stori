@@ -16,19 +16,8 @@ class BookPage extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: false,
+        automaticallyImplyLeading: true,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.close,
-              color: primaryTextColor,
-            ),
-          ),
-        ],
       ),
       body: _body(book, context),
     );
@@ -63,25 +52,7 @@ class BookPage extends StatelessWidget {
           child: Container(
             height: MediaQuery.of(context).size.height * 0.58,
             width: MediaQuery.of(context).size.width,
-            color: Color(0x96000000),
-          ),
-        ),
-        Positioned(
-          bottom: 0,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.58,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  Color(0xf000000),
-                  Color(0xf000000),
-                  Colors.transparent,
-                ],
-              ),
-            ),
+            color: Color(0xaa000000),
           ),
         ),
         Container(
@@ -94,8 +65,8 @@ class BookPage extends StatelessWidget {
                 height: 20.0,
               ),
               Container(
-                height: 192,
-                width: 142,
+                height: 200,
+                width: 120,
                 child: customCachedNetworkImage(
                   url: book.imageUrl,
                 ),

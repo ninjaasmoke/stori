@@ -29,9 +29,11 @@ class LoadingRecBooksState extends RecBooksState {
 class LoadedRecBooksState extends RecBooksState {
   final List<List<BookModel>> booksList;
   final List<String> topics;
+  final BookModel bookOfDay;
   const LoadedRecBooksState({
     required this.booksList,
     required this.topics,
+    required this.bookOfDay,
   });
 }
 
@@ -55,6 +57,9 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
         List<String> topics = await (fireStoreService.getTopics());
         int max = 3;
         int randomNumber = Random().nextInt(max) + 1;
+        String titleBookOfDay = await (fireStoreService.getBookOfDay());
+        BookModel bookOfDay =
+            await booksClient.getBook(pattern: titleBookOfDay);
         for (var topic in topics) {
           booksTopics.add(
             await booksClient.getBooks(
@@ -62,11 +67,12 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
               startIndex: randomNumber,
             ),
           );
+          yield LoadedRecBooksState(
+            topics: topics,
+            bookOfDay: bookOfDay,
+            booksList: booksTopics,
+          );
         }
-        yield LoadedRecBooksState(
-          topics: topics,
-          booksList: booksTopics,
-        );
       } catch (e) {
         yield ErrorRecBooksState(errorMessage: e.toString());
       }

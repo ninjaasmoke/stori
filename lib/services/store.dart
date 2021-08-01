@@ -46,4 +46,10 @@ class FireStoreService {
         await _firestoreInstance.collection("topics").get();
     return res.docs.map((d) => d.id).toList();
   }
+
+  Future<String> getBookOfDay() async {
+    DocumentSnapshot<Map<String, dynamic>> res =
+        await _firestoreInstance.collection("bookOfDay").doc("bookOfDay").get();
+    return res.data()!["title"];
+  }
 }

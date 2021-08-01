@@ -5,6 +5,7 @@ import 'package:stori/components/BookCard.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/models/BookModel.dart';
+import 'package:stori/pages/Book.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -100,7 +101,17 @@ class _SearchPageState extends State<SearchPage> {
           mainAxisExtent: 200,
           crossAxisCount: 3,
         ),
-        itemBuilder: (_, index) => bookCard(books[index]),
+        itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => BookPage(book: books[index]),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
+            child: bookCard(books[index])),
         itemCount: books.length,
       ),
     );

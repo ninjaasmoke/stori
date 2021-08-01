@@ -1,8 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/BookCard.dart';
+import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/UserLogic.dart';
@@ -40,7 +42,7 @@ class _AppPageState extends State<AppPage> {
 
   AppBar _appBar(String? url) {
     return AppBar(
-      backgroundColor: Colors.black87,
+      backgroundColor: Colors.black54,
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: false,
@@ -102,8 +104,89 @@ class _AppPageState extends State<AppPage> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height * 0.7,
+                  padding: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * 0.1,
+                  ),
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      fit: BoxFit.cover,
+                      colorFilter: ColorFilter.mode(
+                        Colors.black87,
+                        BlendMode.darken,
+                      ),
+                      image: CachedNetworkImageProvider(
+                        state.bookOfDay.imageUrl.isNotEmpty
+                            ? state.bookOfDay.imageUrl
+                            : IMAGE_NOT_FOUND_URL,
+                      ),
+                    ),
+                  ),
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                          builder: (context) => BookPage(
+                            book: state.bookOfDay,
+                          ),
+                        ),
+                      );
+                    },
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Container(
+                          width: 180,
+                          height: 260,
+                          child: customCachedNetworkImage(
+                            url: state.bookOfDay.imageUrl,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 40,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                state.bookOfDay.title,
+                                style: TextStyle(
+                                  color: primaryTextColor,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          height: 20,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              "Book of the day • " + state.bookOfDay.authors[0],
+                              style: TextStyle(
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 6.0,
+                            ),
+                            Icon(
+                              Icons.info_outline,
+                              color: primaryTextColor,
+                              size: 16,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
                 Column(
                   children: state.booksList
@@ -138,7 +221,7 @@ class _AppPageState extends State<AppPage> {
               title.replaceFirst(title[0], title[0].toUpperCase()),
               style: TextStyle(
                 color: primaryTextColor,
-                fontSize: 22.0,
+                fontSize: 18.0,
                 fontWeight: FontWeight.w900,
                 fontFamily:
                     GoogleFonts.raleway(fontWeight: FontWeight.w800).fontFamily,
@@ -163,8 +246,8 @@ class _AppPageState extends State<AppPage> {
                       child: Container(
                         margin: EdgeInsets.only(right: 8.0),
                         child: bookCard(book),
-                        height: 172,
-                        width: 122,
+                        height: 156,
+                        width: 110,
                       ),
                     ),
                   )
