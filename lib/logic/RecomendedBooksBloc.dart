@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/models/BookModel.dart';
 import 'package:stori/services/books.dart';
@@ -51,8 +53,15 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
         BooksClient booksClient = new BooksClient();
         FireStoreService fireStoreService = FireStoreService();
         List<String> topics = await (fireStoreService.getTopics());
+        int max = 3;
+        int randomNumber = Random().nextInt(max) + 1;
         for (var topic in topics) {
-          booksTopics.add(await (booksClient.getBooks(pattern: topic)));
+          booksTopics.add(
+            await booksClient.getBooks(
+              pattern: topic,
+              startIndex: randomNumber,
+            ),
+          );
         }
         yield LoadedRecBooksState(
           topics: topics,

@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:html/parser.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/models/BookModel.dart';
@@ -194,7 +195,10 @@ class BookPage extends StatelessWidget {
             ),
           ),
           Text(
-            book.publisher + " • " + book.pageCount.toString() + " pages",
+            book.publisher +
+                (book.pageCount == 0
+                    ? ""
+                    : " • " + book.pageCount.toString() + " pages"),
             style: TextStyle(
               color: tertiaryTextColor,
               fontSize: 14,
@@ -204,7 +208,7 @@ class BookPage extends StatelessWidget {
             height: 12.0,
           ),
           Text(
-            book.snippet,
+            parse(book.snippet).body!.innerHtml,
             style: TextStyle(
               color: primaryTextColor,
               fontSize: 14,
