@@ -3,9 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/SnackBarWidget.dart';
-import 'package:stori/constants.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/UserLogic.dart';
@@ -13,6 +11,7 @@ import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';
 import 'package:stori/pages/Login.dart';
 import 'package:stori/pages/NoConnectivity.dart';
+import 'package:stori/theme.dart';
 
 var res;
 Future<void> main() async {
@@ -46,12 +45,7 @@ class MyApp extends StatelessWidget {
         ),
         child: MaterialApp(
           title: 'Stori',
-          theme: ThemeData(
-            scaffoldBackgroundColor: Colors.black,
-            accentColor: accentcolor,
-            primaryColor: accentcolor,
-            fontFamily: GoogleFonts.poppins().fontFamily,
-          ),
+          theme: themeData,
           debugShowCheckedModeBanner: false,
           home: BlocConsumer<UserBloc, UserState>(
             builder: (context, state) {

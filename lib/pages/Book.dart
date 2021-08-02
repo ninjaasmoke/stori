@@ -16,7 +16,15 @@ class BookPage extends StatelessWidget {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        automaticallyImplyLeading: true,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(
+            Icons.arrow_back,
+            color: tertiaryTextColor,
+          ),
+        ),
         elevation: 0,
       ),
       body: _body(book, context),
@@ -73,7 +81,7 @@ class BookPage extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width,
           child: ImageFiltered(
             imageFilter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
@@ -85,13 +93,13 @@ class BookPage extends StatelessWidget {
         Positioned(
           bottom: 0,
           child: Container(
-            height: MediaQuery.of(context).size.height * 0.58,
+            height: MediaQuery.of(context).size.height * 0.5,
             width: MediaQuery.of(context).size.width,
             color: Color(0xaa000000),
           ),
         ),
         Container(
-          height: MediaQuery.of(context).size.height * 0.5,
+          height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -136,34 +144,6 @@ class BookPage extends StatelessWidget {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 8.0,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextButton.icon(
-                        style: TextButton.styleFrom(
-                          backgroundColor: accentcolor,
-                        ),
-                        onPressed: () {},
-                        icon: Icon(Icons.save_alt, color: primaryTextColor),
-                        label: Text(
-                          "I HAVE THIS",
-                          style: TextStyle(
-                            color: primaryTextColor,
-                            fontFamily:
-                                GoogleFonts.dmSans(fontWeight: FontWeight.w700)
-                                    .fontFamily,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              )
             ],
           ),
         )
@@ -180,22 +160,24 @@ class BookPage extends StatelessWidget {
         children: [
           Text(
             book.title,
-            style: TextStyle(
+            style: GoogleFonts.raleway(
               color: primaryTextColor,
-              fontSize: 18,
+              fontSize: 20,
               fontWeight: FontWeight.w900,
             ),
           ),
           SizedBox(
             height: 12.0,
           ),
-          Text(
-            book.subTitle,
-            style: TextStyle(
-              color: tertiaryTextColor,
-              fontSize: 14,
-            ),
-          ),
+          book.subTitle.isNotEmpty
+              ? Text(
+                  book.subTitle,
+                  style: TextStyle(
+                    color: tertiaryTextColor,
+                    fontSize: 14,
+                  ),
+                )
+              : Container(),
           Text(
             book.publisher +
                 (book.pageCount == 0
@@ -206,15 +188,12 @@ class BookPage extends StatelessWidget {
               fontSize: 14,
             ),
           ),
-          SizedBox(
-            height: 12.0,
-          ),
           Wrap(
             direction: Axis.horizontal,
             children: book.authors
                 .map(
                   (author) => Text(
-                    "\t•\t" + author,
+                    "•\t" + author + "\t",
                     style: TextStyle(
                       color: primaryTextColor,
                     ),
@@ -222,10 +201,55 @@ class BookPage extends StatelessWidget {
                 )
                 .toList(),
           ),
-          Divider(
-            height: 40.0,
-            color: searchBarColor,
-            thickness: 1,
+          SizedBox(
+            height: 8.0,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: TextButton.icon(
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryTextColor,
+                  ),
+                  onPressed: () {},
+                  icon: Icon(Icons.share_arrival_time, color: darkTextColor),
+                  label: Text(
+                    "\tI have this.",
+                    style: TextStyle(
+                      color: darkTextColor,
+                      fontFamily:
+                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                              .fontFamily,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: primaryTextColor),
+                  ),
+                  onPressed: () {},
+                  icon: Icon(Icons.save_alt, color: primaryTextColor),
+                  label: Text(
+                    "\tI want this.",
+                    style: TextStyle(
+                      color: primaryTextColor,
+                      fontFamily:
+                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                              .fontFamily,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 8.0,
           ),
           Text(
             parse(book.snippet).body!.innerHtml,

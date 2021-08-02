@@ -177,8 +177,10 @@ class _AppPageState extends State<AppPage> {
                 ),
                 Column(
                   children: state.booksList
-                      .map((e) => _booksRow(
-                          e, state.topics[state.booksList.indexOf(e)]))
+                      .map(
+                        (e) => _booksRow(
+                            e, state.topics[state.booksList.indexOf(e)]),
+                      )
                       .toList(),
                 )
               ],
