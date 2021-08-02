@@ -1,14 +1,31 @@
 import 'dart:ui';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:html/parser.dart';
+import 'package:stori/components/BookCard.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
+import 'package:stori/logic/SimilarBooksLogic.dart';
 import 'package:stori/models/BookModel.dart';
 
-class BookPage extends StatelessWidget {
+class BookPage extends StatefulWidget {
   final BookModel book;
   const BookPage({Key? key, required this.book}) : super(key: key);
+
+  @override
+  _BookPageState createState() => _BookPageState();
+}
+
+class _BookPageState extends State<BookPage> {
+  @override
+  void initState() {
+    super.initState();
+    context
+        .read<SimilarBooksBloc>()
+        .add(FetchSimilarBooksEvent(bookName: widget.book.title));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +44,7 @@ class BookPage extends StatelessWidget {
         ),
         elevation: 0,
       ),
-      body: _body(book, context),
+      body: _body(widget.book, context),
     );
   }
 
@@ -58,14 +75,7 @@ class BookPage extends StatelessWidget {
                   child: TabBarView(
                     children: [
                       _desc(book, context),
-                      Column(
-                        children: [
-                          Text(
-                            "\nwork in progress...",
-                            style: TextStyle(color: tertiaryTextColor),
-                          )
-                        ],
-                      )
+                      _similarBooks(),
                     ],
                   ),
                 ),
@@ -101,6 +111,8 @@ class BookPage extends StatelessWidget {
         Container(
           height: MediaQuery.of(context).size.height * 0.4,
           width: MediaQuery.of(context).size.width,
+          padding:
+              EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.04),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -273,5 +285,46 @@ class BookPage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _similarBooks() {
+    List<BookModel> _similarBooks = [];
+    return BlocBuilder<SimilarBooksBloc, SimilarBooksState>(builder: (c, s) {
+      if (s is LoadedSimilarBooksState) {
+        _similarBooks = s.similarBooks;
+      }
+      if (s is LoadingSimilarBooksState) {
+        return Column(
+          children: [
+            SizedBox(
+              height: 20.0,
+            ),
+            CircularProgressIndicator()
+          ],
+        );
+      }
+      return GridView.builder(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        physics: NeverScrollableScrollPhysics(),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisSpacing: 4.0,
+          mainAxisSpacing: 6.0,
+          mainAxisExtent: 180,
+          crossAxisCount: 3,
+        ),
+        itemBuilder: (context, index) => GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (context) => BookPage(book: _similarBooks[index]),
+                  fullscreenDialog: true,
+                ),
+              );
+            },
+            child: bookCard(_similarBooks[index])),
+        itemCount: _similarBooks.length,
+      );
+    });
   }
 }

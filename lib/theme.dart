@@ -5,7 +5,7 @@ import 'constants.dart';
 
 ThemeData themeData = ThemeData(
   scaffoldBackgroundColor: scaffoldBGColor,
-  accentColor: Colors.grey,
+  accentColor: Colors.grey.shade800,
   primaryColor: accentcolor,
   primarySwatch: MaterialColor(0xFFE20A16, {
     50: Color.fromRGBO(226, 10, 22, 0.1),
