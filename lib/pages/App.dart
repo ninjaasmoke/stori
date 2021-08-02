@@ -100,13 +100,13 @@ class _AppPageState extends State<AppPage> {
       builder: (context, state) {
         if (state is LoadedRecBooksState)
           return SingleChildScrollView(
-            physics: BouncingScrollPhysics(),
+            // physics: BouncingScrollPhysics(),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
                   width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.7,
+                  // height: MediaQuery.of(context).size.height * 0.5,
                   padding: EdgeInsets.only(
                     top: MediaQuery.of(context).size.height * 0.1,
                   ),
@@ -142,47 +142,34 @@ class _AppPageState extends State<AppPage> {
                           height: 20,
                         ),
                         Container(
-                          width: 180,
-                          height: 260,
+                          width: 120,
+                          height: 180,
                           child: customCachedNetworkImage(
                             url: state.bookOfDay.imageUrl,
                           ),
                         ),
                         SizedBox(
-                          height: 40,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                state.bookOfDay.title,
-                                style: TextStyle(
-                                  color: primaryTextColor,
-                                ),
-                              )
-                            ],
-                          ),
+                          height: 12.0,
                         ),
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Column(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              "Book of the day • " + state.bookOfDay.authors[0],
+                              state.bookOfDay.title,
                               style: TextStyle(
-                                color: secondaryTextColor,
+                                color: primaryTextColor,
                               ),
-                            ),
-                            SizedBox(
-                              height: 6.0,
-                            ),
-                            Icon(
-                              Icons.info_outline,
-                              color: primaryTextColor,
-                              size: 16,
-                            ),
+                            )
                           ],
+                        ),
+                        Text(
+                          "Book of the day • " + state.bookOfDay.authors[0],
+                          style: TextStyle(
+                            color: secondaryTextColor,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 8,
                         ),
                       ],
                     ),
