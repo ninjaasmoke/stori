@@ -13,21 +13,14 @@ import 'package:stori/pages/Book.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
 
-class AppPage extends StatefulWidget {
-  const AppPage({Key? key}) : super(key: key);
-
-  @override
-  _AppPageState createState() => _AppPageState();
-}
-
-class _AppPageState extends State<AppPage> {
+class AppPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
       builder: (c, s) {
         if (s is LoggedInUserState) {
           return Scaffold(
-            appBar: _appBar(s.user.photoURL),
+            appBar: _appBar(s.user.photoURL, c),
             body: _body(c, s),
             extendBodyBehindAppBar: true,
           );
@@ -40,7 +33,7 @@ class _AppPageState extends State<AppPage> {
     );
   }
 
-  AppBar _appBar(String? url) {
+  AppBar _appBar(String? url, BuildContext context) {
     return AppBar(
       backgroundColor: Color(0xBB000000),
       elevation: 0,
@@ -114,7 +107,7 @@ class _AppPageState extends State<AppPage> {
                     image: DecorationImage(
                       fit: BoxFit.cover,
                       colorFilter: ColorFilter.mode(
-                        Colors.black87,
+                        Color(0xcc000000),
                         BlendMode.darken,
                       ),
                       image: CachedNetworkImageProvider(
@@ -149,7 +142,7 @@ class _AppPageState extends State<AppPage> {
                           ),
                         ),
                         SizedBox(
-                          height: 12.0,
+                          height: 10.0,
                         ),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -158,14 +151,18 @@ class _AppPageState extends State<AppPage> {
                               state.bookOfDay.title,
                               style: TextStyle(
                                 color: primaryTextColor,
+                                fontSize: 18.0,
                               ),
                             )
                           ],
                         ),
+                        SizedBox(
+                          height: 4.0,
+                        ),
                         Text(
                           "Book of the day • " + state.bookOfDay.authors[0],
                           style: TextStyle(
-                            color: secondaryTextColor,
+                            color: tertiaryTextColor,
                           ),
                         ),
                         SizedBox(
@@ -179,7 +176,10 @@ class _AppPageState extends State<AppPage> {
                   children: state.booksList
                       .map(
                         (e) => _booksRow(
-                            e, state.topics[state.booksList.indexOf(e)]),
+                          e,
+                          state.topics[state.booksList.indexOf(e)],
+                          userContext,
+                        ),
                       )
                       .toList(),
                 )
@@ -195,7 +195,7 @@ class _AppPageState extends State<AppPage> {
     );
   }
 
-  Widget _booksRow(List<BookModel> books, String title) {
+  Widget _booksRow(List<BookModel> books, String title, BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
       child: Column(
