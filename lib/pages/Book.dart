@@ -39,7 +39,7 @@ class _BookPageState extends State<BookPage> {
           },
           icon: Icon(
             Icons.arrow_back,
-            color: tertiaryTextColor,
+            color: secondaryTextColor,
           ),
         ),
         elevation: 0,
@@ -71,7 +71,7 @@ class _BookPageState extends State<BookPage> {
                   ],
                 ),
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.9,
+                  height: MediaQuery.of(context).size.height * 0.88,
                   child: TabBarView(
                     children: [
                       _desc(book, context),
@@ -318,7 +318,7 @@ class _BookPageState extends State<BookPage> {
                 context,
                 CupertinoPageRoute(
                   builder: (context) => BookPage(book: _similarBooks[index]),
-                  fullscreenDialog: true,
+                  fullscreenDialog: false,
                 ),
               );
             },

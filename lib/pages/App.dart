@@ -42,7 +42,7 @@ class _AppPageState extends State<AppPage> {
 
   AppBar _appBar(String? url) {
     return AppBar(
-      backgroundColor: Colors.black54,
+      backgroundColor: Color(0xBB000000),
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: false,
