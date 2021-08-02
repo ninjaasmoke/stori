@@ -66,7 +66,7 @@ class _SearchPageState extends State<SearchPage> {
       physics: NeverScrollableScrollPhysics(),
       child: Column(
         children: <Widget>[
-          _searchBar(),
+          _searchBar(s),
           SizedBox(
             height: 12.0,
           ),
@@ -132,7 +132,7 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _searchBar() {
+  Widget _searchBar(SearchBooksState s) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 200),
       width: MediaQuery.of(context).size.width,
@@ -143,7 +143,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         color: searchBarColor,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             AnimatedContainer(
@@ -159,7 +159,7 @@ class _SearchPageState extends State<SearchPage> {
               width: searchEnabled ? 26 : 20,
             ),
             Container(
-              width: MediaQuery.of(context).size.width - 120.0,
+              width: MediaQuery.of(context).size.width - 180.0,
               child: TextField(
                 onSubmitted: (String pattern) {
                   if (pattern.isNotEmpty)
@@ -184,6 +184,25 @@ class _SearchPageState extends State<SearchPage> {
                   ),
                 ),
               ),
+            ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              width: searchEnabled ? 12 : 20,
+            ),
+            s is LoadingSearchBooksState
+                ? SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                    ),
+                  )
+                : SizedBox(
+                    width: 18,
+                  ),
+            AnimatedContainer(
+              duration: Duration(milliseconds: 200),
+              width: searchEnabled ? 20 : 24,
             ),
           ],
         ),
