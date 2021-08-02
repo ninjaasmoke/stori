@@ -105,7 +105,17 @@ class _BookPageState extends State<BookPage> {
           child: Container(
             height: MediaQuery.of(context).size.height * 0.5,
             width: MediaQuery.of(context).size.width,
-            color: Color(0xaa000000),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.black,
+                  Color(0x99000000),
+                  Colors.black,
+                ],
+              ),
+            ),
           ),
         ),
         Container(
@@ -248,7 +258,7 @@ class _BookPageState extends State<BookPage> {
                   onPressed: () {},
                   icon: Icon(Icons.save_alt, color: primaryTextColor),
                   label: Text(
-                    "\tI want this.",
+                    "\t I want this.",
                     style: TextStyle(
                       color: primaryTextColor,
                       fontFamily:

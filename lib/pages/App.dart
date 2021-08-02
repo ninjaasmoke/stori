@@ -13,17 +13,46 @@ import 'package:stori/pages/Book.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
 
-class AppPage extends StatelessWidget {
+class AppPage extends StatefulWidget {
+  @override
+  _AppPageState createState() => _AppPageState();
+}
+
+class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
+  late AnimationController _colorAnimation;
+  late Animation _colorTween;
+
+  @override
+  void initState() {
+    _colorAnimation =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 0));
+    _colorTween =
+        ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.8))
+            .animate(_colorAnimation);
+    super.initState();
+  }
+
+  bool _scrollListener(ScrollNotification scrollInfo) {
+    if (scrollInfo.metrics.axis == Axis.vertical) {
+      _colorAnimation.animateTo(scrollInfo.metrics.pixels / 200);
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
       builder: (c, s) {
         if (s is LoggedInUserState) {
-          return Scaffold(
-            appBar: _appBar(s.user.photoURL, c),
-            body: _body(c, s),
-            extendBodyBehindAppBar: true,
-          );
+          return AnimatedBuilder(
+              animation: _colorTween,
+              builder: (co, st) {
+                return Scaffold(
+                  appBar: _appBar(s.user.photoURL, c, _colorTween.value),
+                  body: _body(c, s),
+                  extendBodyBehindAppBar: true,
+                );
+              });
         }
         return Center(
           child: CircularProgressIndicator(),
@@ -33,9 +62,9 @@ class AppPage extends StatelessWidget {
     );
   }
 
-  AppBar _appBar(String? url, BuildContext context) {
+  AppBar _appBar(String? url, BuildContext context, Color appbgcolor) {
     return AppBar(
-      backgroundColor: Color(0xBB000000),
+      backgroundColor: appbgcolor,
       elevation: 0,
       automaticallyImplyLeading: false,
       centerTitle: false,
@@ -92,98 +121,109 @@ class AppPage extends StatelessWidget {
     return BlocBuilder<RecBooksBloc, RecBooksState>(
       builder: (context, state) {
         if (state is LoadedRecBooksState)
-          return SingleChildScrollView(
-            // physics: BouncingScrollPhysics(),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  // height: MediaQuery.of(context).size.height * 0.5,
-                  padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.1,
-                  ),
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      colorFilter: ColorFilter.mode(
-                        Color(0xcc000000),
-                        BlendMode.darken,
-                      ),
-                      image: CachedNetworkImageProvider(
-                        state.bookOfDay.imageUrl.isNotEmpty
-                            ? state.bookOfDay.imageUrl
-                            : IMAGE_NOT_FOUND_URL,
+          return NotificationListener<ScrollNotification>(
+            onNotification: _scrollListener,
+            child: SingleChildScrollView(
+              // physics: BouncingScrollPhysics(),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: CachedNetworkImageProvider(
+                          state.bookOfDay.imageUrl.isNotEmpty
+                              ? state.bookOfDay.imageUrl
+                              : IMAGE_NOT_FOUND_URL,
+                        ),
                       ),
                     ),
-                  ),
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        CupertinoPageRoute(
-                          builder: (context) => BookPage(
-                            book: state.bookOfDay,
-                          ),
-                        ),
-                      );
-                    },
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        SizedBox(
-                          height: 20,
-                        ),
-                        Container(
-                          width: 120,
-                          height: 180,
-                          child: customCachedNetworkImage(
-                            url: state.bookOfDay.imageUrl,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 10.0,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              state.bookOfDay.title,
-                              style: TextStyle(
-                                color: primaryTextColor,
-                                fontSize: 18.0,
-                              ),
-                            )
+                    child: Container(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.1,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black,
+                            Color(0x99000000),
+                            Colors.black,
                           ],
                         ),
-                        SizedBox(
-                          height: 4.0,
+                      ),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            CupertinoPageRoute(
+                              builder: (context) => BookPage(
+                                book: state.bookOfDay,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            SizedBox(
+                              height: 20,
+                            ),
+                            Container(
+                              width: 120,
+                              height: 180,
+                              child: customCachedNetworkImage(
+                                url: state.bookOfDay.imageUrl,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10.0,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  state.bookOfDay.title,
+                                  style: TextStyle(
+                                    color: primaryTextColor,
+                                    fontSize: 18.0,
+                                  ),
+                                )
+                              ],
+                            ),
+                            SizedBox(
+                              height: 4.0,
+                            ),
+                            Text(
+                              "Book of the day • " + state.bookOfDay.authors[0],
+                              style: TextStyle(
+                                color: tertiaryTextColor,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                          ],
                         ),
-                        Text(
-                          "Book of the day • " + state.bookOfDay.authors[0],
-                          style: TextStyle(
-                            color: tertiaryTextColor,
-                          ),
-                        ),
-                        SizedBox(
-                          height: 8,
-                        ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-                Column(
-                  children: state.booksList
-                      .map(
-                        (e) => _booksRow(
-                          e,
-                          state.topics[state.booksList.indexOf(e)],
-                          userContext,
-                        ),
-                      )
-                      .toList(),
-                )
-              ],
+                  Column(
+                    children: state.booksList
+                        .map(
+                          (e) => _booksRow(
+                            e,
+                            state.topics[state.booksList.indexOf(e)],
+                            userContext,
+                          ),
+                        )
+                        .toList(),
+                  )
+                ],
+              ),
             ),
           );
         return Center(
@@ -228,7 +268,7 @@ class AppPage extends StatelessWidget {
                           context,
                           CupertinoPageRoute(
                             builder: (context) => BookPage(book: book),
-                            fullscreenDialog: true,
+                            fullscreenDialog: false,
                           ),
                         );
                       },
