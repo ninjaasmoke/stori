@@ -18,71 +18,104 @@ class BookPage extends StatefulWidget {
   _BookPageState createState() => _BookPageState();
 }
 
-class _BookPageState extends State<BookPage> {
+class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
+  late AnimationController _colorAnimation;
+  late AnimationController _textAnimation;
+  late Animation _colorTween, _textColorTween;
+
+  bool _scrollListener(ScrollNotification scrollInfo) {
+    if (scrollInfo.metrics.axis == Axis.vertical) {
+      _colorAnimation.animateTo(scrollInfo.metrics.pixels / 160);
+      _textAnimation.animateTo((scrollInfo.metrics.pixels - 240) / 50);
+    }
+    return true;
+  }
+
   @override
   void initState() {
+    _colorAnimation =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 0));
+    _colorTween = ColorTween(begin: Colors.transparent, end: Colors.black)
+        .animate(_colorAnimation);
+
+    _textAnimation =
+        AnimationController(vsync: this, duration: Duration(seconds: 0));
+    _textColorTween = ColorTween(begin: Colors.transparent, end: Colors.white)
+        .animate(_textAnimation);
+    context.read<SimilarBooksBloc>().add(FetchSimilarBooksEvent(
+        bookName: widget.book.title + " " + widget.book.authors[0]));
     super.initState();
-    context
-        .read<SimilarBooksBloc>()
-        .add(FetchSimilarBooksEvent(bookName: widget.book.title));
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(
-            Icons.arrow_back,
-            color: secondaryTextColor,
-          ),
-        ),
-        elevation: 0,
-      ),
-      body: _body(widget.book, context),
-    );
+    return AnimatedBuilder(
+        animation: _colorTween,
+        builder: (c, s) {
+          return Scaffold(
+            extendBodyBehindAppBar: true,
+            appBar: AppBar(
+              backgroundColor: _colorTween.value,
+              title: Text(
+                widget.book.title,
+                style: TextStyle(
+                  color: _textColorTween.value,
+                ),
+              ),
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.arrow_back,
+                  color: secondaryTextColor,
+                ),
+              ),
+              elevation: 0,
+            ),
+            body: _body(widget.book, context),
+          );
+        });
   }
 
   Widget _body(BookModel book, BuildContext context) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _banner(book, context),
-          _details(book, context),
-          DefaultTabController(
-            length: 2,
-            child: Column(
-              children: [
-                TabBar(
-                  labelColor: primaryTextColor,
-                  indicatorColor: accentcolor,
-                  tabs: [
-                    Tab(
-                      text: 'Details',
-                    ),
-                    Tab(
-                      text: 'More Like This',
-                    ),
-                  ],
-                ),
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.88,
-                  child: TabBarView(
-                    children: [
-                      _desc(book, context),
-                      _similarBooks(),
+    return NotificationListener(
+      onNotification: _scrollListener,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            _banner(book, context),
+            _details(book, context),
+            DefaultTabController(
+              length: 2,
+              child: Column(
+                children: [
+                  TabBar(
+                    labelColor: primaryTextColor,
+                    indicatorColor: accentcolor,
+                    tabs: [
+                      Tab(
+                        text: 'Details',
+                      ),
+                      Tab(
+                        text: 'More Like This',
+                      ),
                     ],
                   ),
-                ),
-              ],
+                  Container(
+                    height: MediaQuery.of(context).size.height * 0.88,
+                    child: TabBarView(
+                      children: [
+                        _desc(book, context),
+                        _similarBooks(),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -110,8 +143,11 @@ class _BookPageState extends State<BookPage> {
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
                 colors: [
-                  Colors.black,
                   Color(0x99000000),
+                  Color(0xaa000000),
+                  Color(0xbb000000),
+                  Color(0xcc000000),
+                  Color(0xdd000000),
                   Colors.black,
                 ],
               ),

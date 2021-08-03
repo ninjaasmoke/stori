@@ -26,15 +26,15 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
   void initState() {
     _colorAnimation =
         AnimationController(vsync: this, duration: Duration(milliseconds: 0));
-    _colorTween =
-        ColorTween(begin: Colors.transparent, end: Color.fromRGBO(0, 0, 0, 0.8))
-            .animate(_colorAnimation);
+    _colorTween = ColorTween(begin: Colors.transparent, end: Colors.black)
+        .animate(_colorAnimation);
     super.initState();
   }
 
   bool _scrollListener(ScrollNotification scrollInfo) {
-    if (scrollInfo.metrics.axis == Axis.vertical) {
-      _colorAnimation.animateTo(scrollInfo.metrics.pixels / 200);
+    if (scrollInfo.metrics.axis == Axis.vertical &&
+        scrollInfo.metrics.pixels < 400) {
+      _colorAnimation.animateTo(scrollInfo.metrics.pixels / 240);
     }
     return true;
   }
@@ -149,7 +149,6 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
                           colors: [
-                            Colors.black,
                             Color(0x99000000),
                             Colors.black,
                           ],

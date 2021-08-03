@@ -118,6 +118,7 @@ class _SearchPageState extends State<SearchPage> {
         ),
         itemBuilder: (context, index) => GestureDetector(
             onTap: () {
+              _loseFocus();
               Navigator.push(
                 context,
                 CupertinoPageRoute(
@@ -143,7 +144,7 @@ class _SearchPageState extends State<SearchPage> {
       child: Container(
         color: searchBarColor,
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             AnimatedContainer(
