@@ -6,9 +6,13 @@ class FireStoreService {
 
   Future<AppUser> getUser(String? uid) async {
     AppUser _user;
-    DocumentSnapshot<Map<String, dynamic>> doc =
-        await _firestoreInstance.collection("users").doc(uid).get();
-    _user = AppUser.fromJson(doc.data() ?? {});
+    try {
+      DocumentSnapshot<Map<String, dynamic>> doc =
+          await _firestoreInstance.collection("users").doc(uid).get();
+      _user = AppUser.fromJson(doc.data() ?? {});
+    } catch (e) {
+      throw Exception(e);
+    }
     return _user;
   }
 
@@ -21,7 +25,7 @@ class FireStoreService {
         .whenComplete(() {
       return user;
     }).catchError((e) {
-      throw Error();
+      throw Exception(e);
     });
   }
 
