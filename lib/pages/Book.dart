@@ -43,7 +43,9 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
     _textColorTween = ColorTween(begin: Colors.transparent, end: Colors.white)
         .animate(_textAnimation);
     context.read<SimilarBooksBloc>().add(FetchSimilarBooksEvent(
-        bookName: widget.book.title + " " + widget.book.authors[0]));
+        bookName: widget.book.title +
+            " " +
+            widget.book.authors.map((e) => e).join(' ')));
     super.initState();
   }
 
