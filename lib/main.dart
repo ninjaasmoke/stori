@@ -62,7 +62,9 @@ class MyApp extends StatelessWidget {
               if (state is LoggedInUserState) {
                 return AppPage();
               }
-              if (state is LoggedOutUserState || state is LoggingInUserState) {
+              if (state is LoggedOutUserState ||
+                  state is LoggingInUserState ||
+                  state is ErrorUserState) {
                 return LoginPage();
               }
               return InitPage();
