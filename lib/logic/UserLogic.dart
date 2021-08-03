@@ -93,7 +93,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           FireStoreService _fireStore = FireStoreService();
           AppUser appUser = await _fireStore.getUser(uid);
 
-          yield LoggedInUserState(user: appUser);
+          if (appUser.uid != null && appUser.uid!.isNotEmpty) {
+            yield LoggedInUserState(user: appUser);
+          } else {
+            yield LoggedOutUserState();
+          }
         } else {
           yield LoggedOutUserState();
         }
@@ -112,16 +116,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             photoURL: user.photoURL,
             uid: user.uid,
             username: user.displayName,
+            hasBooks: [],
+            wantBooks: [],
           );
           await _fireStore.addUser(_createUser);
-
-          AppUser _user = new AppUser(
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            uid: user.uid,
-            username: user.displayName,
-          );
-          yield LoggedInUserState(user: _user);
+          yield LoggedInUserState(user: _createUser);
         } else {
           yield LoggedInUserState(user: _appUser);
         }
