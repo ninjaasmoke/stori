@@ -37,10 +37,9 @@ class BooksClient {
 
   Future<BookModel> getBook({
     required String pattern,
-    int startIndex = 0,
   }) async {
     var url = Uri.parse(
-      '$BOOKS_GOOGLE_URI_V1?q=$pattern&startIndex=$startIndex&maxResults=1',
+      '$BOOKS_GOOGLE_URI_V1?q=$pattern&startIndex=0&maxResults=1',
     );
 
     BookModel _book = BookModel(
