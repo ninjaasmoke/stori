@@ -45,6 +45,20 @@ class _TourPageState extends State<TourPage> {
     super.initState();
   }
 
+  List<String> imgUrls = [
+    "https://ninjaasmoke.tech/stori/images/img_1.png",
+    "https://ninjaasmoke.tech/stori/images/img_2.png",
+    "https://ninjaasmoke.tech/stori/images/img_3.png",
+    "",
+  ];
+
+  List<String> tourInstr = [
+    "Welcome to Stori!\nYou can choose a book that you are interested in.\n",
+    "You basically have to pick whether you have the book or need it.\n",
+    "It will apprear in \"Your Books\" section.\n",
+    "You can exchange the books you HAVE, with the books you NEED!",
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: BlocBuilder<UserBloc, UserState>(
@@ -60,7 +74,7 @@ class _TourPageState extends State<TourPage> {
                     ),
                     Container(
                       padding: const EdgeInsets.all(20.0),
-                      height: MediaQuery.of(context).size.height / 2,
+                      height: MediaQuery.of(context).size.height * 0.8,
                       child: PageView.builder(
                         physics: NeverScrollableScrollPhysics(),
                         controller: _pageController,
@@ -74,33 +88,49 @@ class _TourPageState extends State<TourPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                "$index",
-                                style: TextStyle(color: accentcolor),
+                                tourInstr[index],
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.kumbhSans(
+                                  color: primaryTextColor,
+                                  fontSize: 20.0,
+                                  height: 1.4,
+                                ),
                               ),
+                              imgUrls[index].isNotEmpty
+                                  ? Image.network(imgUrls[index])
+                                  : Container(),
                             ],
                           );
                         },
-                        itemCount: 10,
+                        itemCount: imgUrls.length,
                       ),
                     ),
                     TextButton(
                       style: TextButton.styleFrom(
-                          backgroundColor: primaryTextColor,
+                          backgroundColor: _currentIndex == tourInstr.length - 1
+                              ? accentcolor
+                              : primaryTextColor,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(40.0))),
                       onPressed: () {
                         setState(() {
-                          _pageController.animateToPage(
-                            _currentIndex += 1,
-                            duration: Duration(milliseconds: 400),
-                            curve: Curves.ease,
-                          );
+                          _currentIndex == tourInstr.length - 1
+                              ? context.read<UserBloc>().add(FetchUserEvent())
+                              : _pageController.animateToPage(
+                                  _currentIndex += 1,
+                                  duration: Duration(milliseconds: 400),
+                                  curve: Curves.ease,
+                                );
                         });
                       },
                       child: Text(
-                        "\t\tNext\t\t",
+                        _currentIndex == tourInstr.length - 1
+                            ? "\t\tI undertand!\t\t"
+                            : "\t\tNext\t\t",
                         style: TextStyle(
-                          color: darkTextColor,
+                          color: _currentIndex == tourInstr.length - 1
+                              ? primaryTextColor
+                              : darkTextColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
