@@ -321,7 +321,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           if (currentUser.hasBooks.length == 1) {
             yield LoggedInUserState(
               user: currentUser,
-              loggedInMessage: 'It will be in "Your Books" section.',
+              loggedInMessage: 'You can find it in the "Your Books" section.',
               hasBooks: hasBooks,
               wantBooks: wantBooks,
             );
@@ -367,7 +367,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           if (currentUser.wantBooks.length == 1) {
             yield LoggedInUserState(
               user: currentUser,
-              loggedInMessage: 'It will be in "Your Books" section.',
+              loggedInMessage: 'You can find it in the "Your Books" section.',
               hasBooks: hasBooks,
               wantBooks: wantBooks,
             );
