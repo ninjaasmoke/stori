@@ -207,10 +207,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: [
-                            Color(0x99000000),
-                            Colors.black,
-                          ],
+                          colors: darkgradiedColor,
                         ),
                       ),
                       child: GestureDetector(
@@ -313,8 +310,9 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                     color: primaryTextColor,
                     fontSize: 20.0,
                     fontWeight: FontWeight.w900,
-                    fontFamily: GoogleFonts.raleway(fontWeight: FontWeight.w800)
-                        .fontFamily,
+                    fontFamily:
+                        GoogleFonts.kumbhSans(fontWeight: FontWeight.w700)
+                            .fontFamily,
                   ),
                 ),
               ),

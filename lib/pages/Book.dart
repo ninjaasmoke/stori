@@ -147,14 +147,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [
-                  Color(0x99000000),
-                  Color(0xaa000000),
-                  Color(0xbb000000),
-                  Color(0xcc000000),
-                  Color(0xdd000000),
-                  Colors.black,
-                ],
+                colors: darkgradiedColor,
               ),
             ),
           ),
@@ -222,10 +215,12 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
         children: [
           Text(
             book.title,
-            style: GoogleFonts.raleway(
+            style: TextStyle(
               color: primaryTextColor,
-              fontSize: 20,
+              fontSize: 20.0,
               fontWeight: FontWeight.w900,
+              fontFamily:
+                  GoogleFonts.kumbhSans(fontWeight: FontWeight.w700).fontFamily,
             ),
           ),
           SizedBox(

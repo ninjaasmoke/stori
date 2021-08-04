@@ -11,6 +11,15 @@ final Color primaryTextColor = new Color(0xFFEFEFEF);
 final Color secondaryTextColor = Color(0xffCECECE);
 final Color tertiaryTextColor = Colors.grey;
 
+final List<Color> darkgradiedColor = [
+  Color(0x99000000),
+  Color(0xaa000000),
+  Color(0xbb000000),
+  Color(0xcc000000),
+  Color(0xdd000000),
+  Colors.black,
+];
+
 final Color darkTextColor = Color(0xFF000000);
 
 final Color tileColor = Color(0xff181818);
