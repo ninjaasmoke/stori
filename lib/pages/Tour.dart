@@ -55,7 +55,7 @@ class _TourPageState extends State<TourPage> {
   List<String> tourInstr = [
     "Welcome to Stori!\nYou can choose a book that you are interested in.\n",
     "You basically have to pick whether you \"HAVE\" the book or \"WANT\" it.\n",
-    "You can find it in the \"Your Books\" section. \n",
+    "After selecting, you can find it in the \"Your Books\" section.\n",
     "You can exchange the books you HAVE, with the books you NEED!",
   ];
 
@@ -90,7 +90,7 @@ class _TourPageState extends State<TourPage> {
                               Text(
                                 tourInstr[index],
                                 textAlign: TextAlign.center,
-                                style: GoogleFonts.kumbhSans(
+                                style: GoogleFonts.raleway(
                                   color: primaryTextColor,
                                   fontSize: 20.0,
                                   height: 1.4,
@@ -135,6 +135,9 @@ class _TourPageState extends State<TourPage> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: 12.0,
+                    ),
                   ],
                 );
         }
@@ -167,16 +170,18 @@ class _TourPageState extends State<TourPage> {
                   children: <Widget>[
                     Text(
                       'Hi, ',
-                      style: GoogleFonts.kumbhSans(
-                        fontSize: 32.0,
+                      style: GoogleFonts.raleway(
+                        fontSize: 30.0,
                         color: primaryTextColor,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                     Text(
                       name.split(' ')[0],
-                      style: GoogleFonts.kumbhSans(
+                      style: GoogleFonts.raleway(
                         fontSize: 32.0,
                         color: accentcolor,
+                        fontWeight: FontWeight.w400,
                       ),
                     ),
                   ],
@@ -187,10 +192,9 @@ class _TourPageState extends State<TourPage> {
                 duration: Duration(milliseconds: 400),
                 child: Text(
                   "\nSince you just created an account, would you like to take a tour?",
-                  style: GoogleFonts.kumbhSans(
+                  style: GoogleFonts.raleway(
                     fontSize: 20.0,
                     color: primaryTextColor,
-                    height: 1.4,
                   ),
                 ),
               )
@@ -232,7 +236,7 @@ class _TourPageState extends State<TourPage> {
                   },
                   child: Text(
                     "\t\tYeah!\t\t",
-                    style: TextStyle(
+                    style: GoogleFonts.raleway(
                       color: darkTextColor,
                       fontWeight: FontWeight.bold,
                     ),

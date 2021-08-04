@@ -83,9 +83,10 @@ class MyApp extends StatelessWidget {
                 } else if (state is ErrorUserState) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     customSnackBar(
-                        text: state.errorMessage.contains("null")
-                            ? "Login failed! Try again."
-                            : state.errorMessage),
+                      text: state.errorMessage.contains("null")
+                          ? "Login failed! Try again."
+                          : state.errorMessage,
+                    ),
                   );
                 } else if (state is LoggingInUserState) {
                   ScaffoldMessenger.of(context).showSnackBar(
