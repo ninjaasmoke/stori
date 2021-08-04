@@ -370,6 +370,18 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
             "Books you want",
             context,
           ),
+        if (userState is LoggedInUserState &&
+            userState.wantBooks.isEmpty &&
+            userState.hasBooks.isEmpty)
+          Container(
+            height: MediaQuery.of(context).size.height * 0.8,
+            child: Center(
+              child: Text(
+                "Find some books that you like!",
+                style: TextStyle(color: tertiaryTextColor),
+              ),
+            ),
+          )
       ],
     );
   }

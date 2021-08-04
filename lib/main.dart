@@ -7,7 +7,6 @@ import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
-import 'package:stori/logic/TourLogic.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';
@@ -55,7 +54,8 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: BlocConsumer<UserBloc, UserState>(
             builder: (context, state) {
-              if (res == ConnectivityResult.none) {
+              if (res == ConnectivityResult.none ||
+                  state is NoConnectionUserState) {
                 return NoConnectivityPage();
               }
               if (state is InitUserState || state is LoadingUserState) {
