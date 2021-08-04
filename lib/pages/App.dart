@@ -145,14 +145,18 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
       iconSize: 20.0,
       items: [
         BottomNavigationBarItem(
-          icon: _currentBodyIndex == 0
-              ? Icon(Icons.home_rounded)
-              : Icon(Icons.home_outlined),
+          icon: Icon(
+            _currentBodyIndex == 0
+                ? CupertinoIcons.house_fill
+                : CupertinoIcons.house,
+          ),
           label: "Home",
         ),
         BottomNavigationBarItem(
           icon: Icon(
-            _currentBodyIndex == 1 ? Icons.book : Icons.book_outlined,
+            _currentBodyIndex == 1
+                ? CupertinoIcons.book_fill
+                : CupertinoIcons.book,
           ),
           label: "Your Books",
         ),
