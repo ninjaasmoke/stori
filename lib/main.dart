@@ -77,14 +77,13 @@ class MyApp extends StatelessWidget {
                   );
                 } else if (state is ErrorUserState) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    customSnackBar(text: state.errorMessage, milli: 10000),
+                    customSnackBar(text: state.errorMessage),
                   );
                 } else if (state is LoggingInUserState) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    customSnackBar(text: 'Logging in...', milli: 10000),
+                    customSnackBar(text: 'Logging in...'),
                   );
                 } else if (state is LoggedInUserState) {
-                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
                     customSnackBar(
                       text: state.loggedInMessage,

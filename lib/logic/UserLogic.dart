@@ -214,6 +214,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         currentUser.hasBooks.add(event.bookId);
         yield LoggedInUserState(
             user: currentUser, loggedInMessage: 'Added book!');
+        if (currentUser.hasBooks.length == 1) {
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Your books will be in My Books section.',
+          );
+        }
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

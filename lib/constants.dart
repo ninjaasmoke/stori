@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 final Color accentcolor = new Color(0xFFE20A16);
-final Color snackBarcolor = new Color(0xFF181818);
+final Color snackBarcolor = new Color(0xFF101010);
+final Color bottomNavBarColor = Color(0xFF101010);
 
 final Color scaffoldBGColor = new Color(0xFF000000);
 final Color appBarBGColor = new Color(0xFF080808);
@@ -16,6 +17,7 @@ final Color tileColor = Color(0xff181818);
 final Color searchBarColor = Color(0xff242424);
 
 final Color lightIconColor = Colors.grey;
+final Color unselectedIconColor = Colors.grey.shade600;
 
 const String TITLE_FONT = 'title';
 

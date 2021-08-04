@@ -39,6 +39,14 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
     return true;
   }
 
+  int _currentBodyIndex = 0;
+
+  void _babTapHandle(int index) {
+    setState(() {
+      _currentBodyIndex = index;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<UserBloc, UserState>(
@@ -49,8 +57,9 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
               builder: (co, st) {
                 return Scaffold(
                   appBar: _appBar(s.user.photoURL, c, _colorTween.value),
-                  body: _body(c, s),
+                  body: _recBooksBody(c, s),
                   extendBodyBehindAppBar: true,
+                  bottomNavigationBar: _bottomNavBar(),
                 );
               });
         }
@@ -117,7 +126,35 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _body(BuildContext userContext, LoggedInUserState userState) {
+  BottomNavigationBar _bottomNavBar() {
+    return BottomNavigationBar(
+      elevation: 0,
+      onTap: _babTapHandle,
+      currentIndex: _currentBodyIndex,
+      backgroundColor: bottomNavBarColor,
+      unselectedItemColor: unselectedIconColor,
+      selectedItemColor: primaryTextColor,
+      selectedFontSize: 11.0,
+      unselectedFontSize: 11.0,
+      iconSize: 20.0,
+      items: [
+        BottomNavigationBarItem(
+          icon: _currentBodyIndex == 0
+              ? Icon(Icons.home_rounded)
+              : Icon(Icons.home_outlined),
+          label: "Home",
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(
+            _currentBodyIndex == 1 ? Icons.book : Icons.book_outlined,
+          ),
+          label: "My Books",
+        ),
+      ],
+    );
+  }
+
+  Widget _recBooksBody(BuildContext userContext, LoggedInUserState userState) {
     return BlocBuilder<RecBooksBloc, RecBooksState>(
       builder: (context, state) {
         if (state is LoadedRecBooksState)
