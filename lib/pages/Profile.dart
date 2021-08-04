@@ -70,6 +70,7 @@ class ProfilePage extends StatelessWidget {
 
   Widget _profileBanner(AppUser user, BuildContext context) {
     return Container(
+      height: 204,
       color: scaffoldBGColor,
       alignment: Alignment.center,
       child: Column(

@@ -183,14 +183,16 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           );
           await _fireStore.addUser(_createUser);
           currentUser = _createUser;
-          for (var hBook in currentUser.hasBooks) {
-            BookModel _book = await BooksClient().getBook(pattern: hBook);
-            hasBooks.add(_book);
-          }
-          for (var wBook in currentUser.wantBooks) {
-            BookModel _book = await BooksClient().getBook(pattern: wBook);
-            wantBooks.add(_book);
-          }
+
+          // TODO : check if needed
+          // for (var hBook in currentUser.hasBooks) {
+          //   BookModel _book = await BooksClient().getBook(pattern: hBook);
+          //   hasBooks.add(_book);
+          // }
+          // for (var wBook in currentUser.wantBooks) {
+          //   BookModel _book = await BooksClient().getBook(pattern: wBook);
+          //   wantBooks.add(_book);
+          // }
           yield LoggedInUserState(
             user: _createUser,
             loggedInMessage: 'Welcome ${currentUser.username}',
@@ -229,6 +231,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
         _prefs.setBool('isLoggedIn', false);
         _prefs.setString('uid', "");
+        currentUser = AppUser(
+          displayName: '',
+          username: '',
+          uid: '',
+          photoURL: '',
+          hasBooks: [],
+          wantBooks: [],
+        );
         yield LoggedOutUserState();
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
