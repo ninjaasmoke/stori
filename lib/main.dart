@@ -90,6 +90,14 @@ class MyApp extends StatelessWidget {
                       milli: 3000,
                     ),
                   );
+                } else if (state is UpdatingUserState) {
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    customSnackBar(
+                      text: state.updatingMessage,
+                      milli: 2000,
+                    ),
+                  );
                 }
                 //  else if (state is LoggedOutUserState) {
 
