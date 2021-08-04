@@ -6,7 +6,7 @@ SnackBar customSnackBar({required String text, int milli = 300}) {
   return SnackBar(
     content: Text(
       text,
-      style: GoogleFonts.nunito(
+      style: GoogleFonts.nunitoSans(
         color: primaryTextColor,
         fontWeight: FontWeight.w600,
       ),

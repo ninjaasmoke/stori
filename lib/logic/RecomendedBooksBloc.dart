@@ -55,6 +55,7 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
         BooksClient booksClient = new BooksClient();
         FireStoreService fireStoreService = FireStoreService();
         List<String> topics = await (fireStoreService.getTopics());
+        topics.shuffle();
         int max = 3;
         int randomNumber = Random().nextInt(max) + 1;
         String titleBookOfDay = await (fireStoreService.getBookOfDay());
@@ -70,6 +71,7 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
             await booksClient.getBooks(
               pattern: topic,
               startIndex: randomNumber,
+              maxResults: 21,
             ),
           );
           yield LoadedRecBooksState(

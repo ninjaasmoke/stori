@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+// import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stori/models/UserModel.dart';
@@ -98,9 +99,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserState get initialState => InitUserState();
 
   late AppUser currentUser;
+  // RemoteConfig remoteConfig = RemoteConfig.instance;
 
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
+    // await remoteConfig.setDefaults(<String, dynamic>{
+    //   'welcome_message': 'default welcome',
+    // });
+    // bool updated = await remoteConfig.fetchAndActivate();
+    // if (updated) {
+    //   // the config has been updated, new parameter values are available.
+    //   print(remoteConfig.getString('welcome_message'));
+    // } else {
+    //   // the config values were previously updated.
+    //   print("Old vals");
+    //   print(remoteConfig.getString('welcome_message'));
+    // }
     if (event is FetchUserEvent) {
       yield LoadingUserState(loadingMessage: 'Fetching user...');
       try {

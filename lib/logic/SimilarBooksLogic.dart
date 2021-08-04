@@ -45,8 +45,11 @@ class SimilarBooksBloc extends Bloc<SimilarBooksEvent, SimilarBooksState> {
       yield LoadingSimilarBooksState(
           loadingMessage: 'Fetching similar books...');
       try {
-        List<BookModel> _books = await BooksClient()
-            .getBooks(pattern: event.bookName, maxResults: 9);
+        List<BookModel> _books = await BooksClient().getBooks(
+          pattern: event.bookName,
+          startIndex: 1,
+          maxResults: 9,
+        );
         yield LoadedSimilarBooksState(similarBooks: _books);
       } catch (e) {
         yield ErrorSimilarBooksState(errorMessage: e.toString());

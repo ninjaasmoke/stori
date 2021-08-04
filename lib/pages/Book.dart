@@ -99,10 +99,10 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                     indicatorColor: accentcolor,
                     tabs: [
                       Tab(
-                        text: 'Details',
+                        text: 'More Like This',
                       ),
                       Tab(
-                        text: 'More Like This',
+                        text: 'Details',
                       ),
                     ],
                   ),
@@ -110,8 +110,8 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                     height: MediaQuery.of(context).size.height * 0.88,
                     child: TabBarView(
                       children: [
-                        _desc(book, context),
                         _similarBooks(),
+                        _desc(book, context),
                       ],
                     ),
                   ),
@@ -214,11 +214,10 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   }
 
   Widget _details(BookModel book, BuildContext context) {
-    return Container(
+    return Padding(
       padding: EdgeInsets.all(12),
-      width: MediaQuery.of(context).size.width,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Text(
             book.title,
@@ -266,59 +265,45 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
           SizedBox(
             height: 8.0,
           ),
-          Row(
-            children: [
-              Expanded(
-                child: TextButton.icon(
-                  style: TextButton.styleFrom(
-                    backgroundColor: primaryTextColor,
-                  ),
-                  onPressed: () {
-                    context
-                        .read<UserBloc>()
-                        .add(UserAddHasBookEvent(bookId: book.id));
-                  },
-                  icon: Icon(Icons.share_arrival_time, color: darkTextColor),
-                  label: Text(
-                    "\tI have this.",
-                    style: TextStyle(
-                      color: darkTextColor,
-                      fontFamily:
-                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
-                              .fontFamily,
-                    ),
-                  ),
-                ),
+          TextButton.icon(
+            style: TextButton.styleFrom(
+              backgroundColor: primaryTextColor,
+            ),
+            onPressed: () {
+              context
+                  .read<UserBloc>()
+                  .add(UserAddHasBookEvent(bookId: book.id));
+            },
+            icon: Icon(Icons.share_arrival_time, color: darkTextColor),
+            label: Text(
+              "\tI have this.",
+              style: TextStyle(
+                color: darkTextColor,
+                fontFamily:
+                    GoogleFonts.dmSans(fontWeight: FontWeight.w700).fontFamily,
               ),
-            ],
+            ),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: OutlinedButton.icon(
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(color: primaryTextColor),
-                  ),
-                  onPressed: () {},
-                  icon: Icon(Icons.save_alt, color: primaryTextColor),
-                  label: Text(
-                    "\t I want this.",
-                    style: TextStyle(
-                      color: primaryTextColor,
-                      fontFamily:
-                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
-                              .fontFamily,
-                    ),
-                  ),
-                ),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              side: BorderSide(color: primaryTextColor),
+            ),
+            onPressed: () {},
+            icon: Icon(Icons.save_alt, color: primaryTextColor),
+            label: Text(
+              "\t I want this.",
+              style: TextStyle(
+                color: primaryTextColor,
+                fontFamily:
+                    GoogleFonts.dmSans(fontWeight: FontWeight.w700).fontFamily,
               ),
-            ],
+            ),
           ),
           SizedBox(
             height: 8.0,
           ),
           Text(
-            parse(book.snippet).body!.innerHtml,
+            parse(book.snippet).body!.text,
             style: TextStyle(
               color: primaryTextColor,
               fontSize: 14,

@@ -66,14 +66,25 @@ class FireStoreService {
   }
 
   Future<List<String>> getTopics() async {
-    QuerySnapshot<Map<String, dynamic>> res =
-        await _firestoreInstance.collection("topics").get();
-    return res.docs.map((d) => d.id).toList();
+    try {
+      DocumentSnapshot<Map<String, dynamic>> res =
+          await _firestoreInstance.collection("books").doc("topics").get();
+      List<String> _books = res.data()!.keys.toList();
+      return _books;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   Future<String> getBookOfDay() async {
-    DocumentSnapshot<Map<String, dynamic>> res =
-        await _firestoreInstance.collection("bookOfDay").doc("bookOfDay").get();
-    return res.data()!["title"];
+    try {
+      DocumentSnapshot<Map<String, dynamic>> res = await _firestoreInstance
+          .collection("books")
+          .doc("bookOfTheDay")
+          .get();
+      return res.data()!["title"];
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }

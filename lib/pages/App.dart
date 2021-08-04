@@ -246,7 +246,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
             child: Text(
-              title.replaceFirst(title[0], title[0].toUpperCase()),
+              title,
               style: TextStyle(
                 color: primaryTextColor,
                 fontSize: 18.0,

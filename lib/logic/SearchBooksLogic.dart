@@ -49,9 +49,9 @@ class SearchBooksBloc extends Bloc<SearchBooksEvent, SearchBooksState> {
     if (event is SearchSearchBooksEvent) {
       yield LoadingSearchBooksState(loadingMessage: 'Searching...');
       try {
-        // TODO
-        List<BookModel> books =
-            await BooksClient().getBooks(pattern: event.pattern);
+        // TODO: pagination
+        List<BookModel> books = await BooksClient()
+            .getBooks(pattern: event.pattern, maxResults: 39);
         if (books.length != 0) {
           yield SearchSearchBooksState(books: books);
         } else {
