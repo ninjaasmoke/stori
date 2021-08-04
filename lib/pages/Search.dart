@@ -73,9 +73,10 @@ class _SearchPageState extends State<SearchPage> {
           Container(
             color: tileColor,
             width: MediaQuery.of(context).size.width,
-            padding: EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+            padding: EdgeInsets.symmetric(vertical: 8),
+            alignment: Alignment.center,
             child: Text(
-              "Top results will be shown here",
+              "Top results will appear here",
               style: TextStyle(
                 color: primaryTextColor,
               ),

@@ -26,7 +26,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
   void initState() {
     _colorAnimation =
         AnimationController(vsync: this, duration: Duration(milliseconds: 0));
-    _colorTween = ColorTween(begin: Colors.transparent, end: Colors.black)
+    _colorTween = ColorTween(begin: Colors.transparent, end: appBarBGColor)
         .animate(_colorAnimation);
     super.initState();
   }
@@ -127,6 +127,9 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
               ),
             );
           },
+        ),
+        SizedBox(
+          width: 4.0,
         ),
       ],
     );
