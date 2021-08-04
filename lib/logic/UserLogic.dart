@@ -381,6 +381,28 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }
+    } else if (event is UserRemoveWantBookEvent) {
+      yield UpdatingUserState(updatingMessage: 'Removing book...');
+      try {
+        if (currentUser.wantBooks.contains(event.bookId)) {
+          FireStoreService _fireStore = FireStoreService();
+          await _fireStore.removeBook(
+            currentUser.uid ?? '',
+            'wantBooks',
+            event.bookId,
+          );
+          wantBooks.removeWhere((element) => element.id == event.bookId);
+          currentUser.wantBooks.remove(event.bookId);
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Removed book from your list.',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+        }
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
     }
   }
 }

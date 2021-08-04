@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     customSnackBar(
                       text: state.loggedInMessage,
-                      milli: 2000,
+                      milli: 3000,
                     ),
                   );
                 }

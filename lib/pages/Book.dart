@@ -333,7 +333,35 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                     ),
                   ),
                 )
-              : Container(),
+              : !context
+                      .watch<UserBloc>()
+                      .currentUser
+                      .hasBooks
+                      .contains(book.id)
+                  ? OutlinedButton.icon(
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: primaryTextColor),
+                      ),
+                      onPressed: () {
+                        context
+                            .read<UserBloc>()
+                            .add(UserRemoveWantBookEvent(bookId: book.id));
+                      },
+                      icon: Icon(
+                        Icons.remove_circle_outline_rounded,
+                        color: primaryTextColor,
+                      ),
+                      label: Text(
+                        "\tRemove this book from wishlist.",
+                        style: TextStyle(
+                          color: primaryTextColor,
+                          fontFamily:
+                              GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                                  .fontFamily,
+                        ),
+                      ),
+                    )
+                  : Container(),
           SizedBox(
             height: 8.0,
           ),
