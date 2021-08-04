@@ -27,6 +27,26 @@ class UpdateUserEvent extends UserEvent {
   const UpdateUserEvent({required this.appUser});
 }
 
+class UserAddHasBookEvent extends UserEvent {
+  final String bookId;
+  const UserAddHasBookEvent({required this.bookId});
+}
+
+class UserAddWantBookEvent extends UserEvent {
+  final String bookId;
+  const UserAddWantBookEvent({required this.bookId});
+}
+
+class UserRemoveHasBookEvent extends UserEvent {
+  final String bookId;
+  const UserRemoveHasBookEvent({required this.bookId});
+}
+
+class UserRemoveWantBookEvent extends UserEvent {
+  final String bookId;
+  const UserRemoveWantBookEvent({required this.bookId});
+}
+
 // States
 abstract class UserState {
   const UserState();
@@ -53,7 +73,8 @@ class LoggingOutUserState extends UserState {
 
 class LoggedInUserState extends UserState {
   final AppUser user;
-  const LoggedInUserState({required this.user});
+  final String loggedInMessage;
+  const LoggedInUserState({required this.user, required this.loggedInMessage});
 }
 
 class LoggedOutUserState extends UserState {
@@ -76,6 +97,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   UserState get initialState => InitUserState();
 
+  late AppUser currentUser;
+
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
     if (event is FetchUserEvent) {
@@ -91,10 +114,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         if (isLoggedIn == true && uid != null && uid.isNotEmpty) {
           print("User is logged in");
           FireStoreService _fireStore = FireStoreService();
-          AppUser appUser = await _fireStore.getUser(uid);
+          AppUser _appUser = await _fireStore.getUser(uid);
 
-          if (appUser.uid != null && appUser.uid!.isNotEmpty) {
-            yield LoggedInUserState(user: appUser);
+          if (_appUser.uid != null && _appUser.uid!.isNotEmpty) {
+            currentUser = _appUser;
+            yield LoggedInUserState(
+                user: _appUser,
+                loggedInMessage: 'Welcome back, ${currentUser.username}');
           } else {
             yield LoggedOutUserState();
           }
@@ -120,9 +146,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             wantBooks: [],
           );
           await _fireStore.addUser(_createUser);
-          yield LoggedInUserState(user: _createUser);
+          currentUser = _createUser;
+          yield LoggedInUserState(
+              user: _createUser,
+              loggedInMessage: 'Welcome ${currentUser.username}');
         } else {
-          yield LoggedInUserState(user: _appUser);
+          currentUser = _appUser;
+          yield LoggedInUserState(
+              user: _appUser,
+              loggedInMessage: 'Welcome back, ${currentUser.username}');
         }
         SharedPreferences _prefs = await SharedPreferences.getInstance();
 
@@ -147,10 +179,27 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield UpdatingUserState(updatingMessage: 'Updating user...');
 
       try {
-        // TODO
         FireStoreService _fireStore = FireStoreService();
         await _fireStore.updateUser(event.appUser);
-        yield LoggedInUserState(user: event.appUser);
+        currentUser = event.appUser;
+        yield LoggedInUserState(
+            user: event.appUser,
+            loggedInMessage: 'Welcome ${currentUser.username}');
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is UserAddHasBookEvent) {
+      yield UpdatingUserState(updatingMessage: 'Adding book...');
+      try {
+        FireStoreService _fireStore = FireStoreService();
+        await _fireStore.addBook(
+          currentUser.uid ?? '',
+          'hasBooks',
+          event.bookId,
+        );
+        currentUser.hasBooks.add(event.bookId);
+        yield LoggedInUserState(
+            user: currentUser, loggedInMessage: 'Added book!');
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }

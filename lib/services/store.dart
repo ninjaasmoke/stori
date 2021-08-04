@@ -45,6 +45,26 @@ class FireStoreService {
     });
   }
 
+  Future addBook(String uid, String booksType, String book) async {
+    await _firestoreInstance.collection("users").doc(uid).update({
+      booksType: FieldValue.arrayUnion([book])
+    }).whenComplete(() {
+      return;
+    }).catchError((e) {
+      throw Exception(e);
+    });
+  }
+
+  Future removeBook(String uid, String booksType, String book) async {
+    await _firestoreInstance.collection("users").doc(uid).update({
+      booksType: FieldValue.arrayRemove([book])
+    }).whenComplete(() {
+      return;
+    }).catchError((e) {
+      throw Exception(e);
+    });
+  }
+
   Future<List<String>> getTopics() async {
     QuerySnapshot<Map<String, dynamic>> res =
         await _firestoreInstance.collection("topics").get();
