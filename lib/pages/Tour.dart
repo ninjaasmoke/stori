@@ -54,8 +54,8 @@ class _TourPageState extends State<TourPage> {
 
   List<String> tourInstr = [
     "Welcome to Stori!\nYou can choose a book that you are interested in.\n",
-    "You basically have to pick whether you have the book or need it.\n",
-    "You can find it in the \"Your Books\" section.\n",
+    "You basically have to pick whether you \"HAVE\" the book or \"WANT\" it.\n",
+    "You can find it in the \"Your Books\" section. \n",
     "You can exchange the books you HAVE, with the books you NEED!",
   ];
 
