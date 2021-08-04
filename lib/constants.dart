@@ -11,7 +11,7 @@ const Color primaryTextColor = Color(0xFFEFEFEF);
 const Color secondaryTextColor = Color(0xffCECECE);
 const Color tertiaryTextColor = Colors.grey;
 
-const List<Color> darkgradiedColor = [
+const List<Color> darkgradientColor = [
   Color(0x99000000),
   Color(0xaa000000),
   Color(0xbb000000),

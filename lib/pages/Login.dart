@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/UserLogic.dart';
 
@@ -19,17 +20,42 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _body(BuildContext context, UserState state) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        _banner(),
-        _loginButton(context),
-      ],
+    return Container(
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: AssetImage('assets/bg/bg.jpg'),
+          // fit:
+        ),
+      ),
+      child: Container(
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xff000000),
+            Color(0xbb000000),
+            Color(0xbb000000),
+            Color(0xcc000000),
+            Color(0xdd000000),
+            Colors.black,
+            Colors.black,
+          ],
+        )),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _banner(),
+            _loginButton(context),
+          ],
+        ),
+      ),
     );
   }
 
   Widget _banner() {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Text(
           'stori',
@@ -49,7 +75,7 @@ class LoginPage extends StatelessWidget {
     return Text(
       "Something about the app . . .",
       style: TextStyle(
-        color: tertiaryTextColor,
+        color: primaryTextColor,
       ),
     );
   }
@@ -77,13 +103,16 @@ class LoginPage extends StatelessWidget {
             SizedBox(
               width: 30,
             ),
-            Center(
-              child: Text(
-                "Continue with Google",
-                style: TextStyle(
-                  color: darkTextColor,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16.0,
+            Padding(
+              padding: const EdgeInsets.only(top: 4.0),
+              child: Center(
+                child: Text(
+                  "Continue with Google",
+                  style: GoogleFonts.kumbhSans(
+                    color: darkTextColor,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16.0,
+                  ),
                 ),
               ),
             ),

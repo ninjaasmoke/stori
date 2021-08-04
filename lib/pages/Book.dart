@@ -146,7 +146,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
               gradient: LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: darkgradiedColor,
+                colors: darkgradientColor,
               ),
             ),
           ),

@@ -210,7 +210,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                         gradient: LinearGradient(
                           begin: Alignment.topCenter,
                           end: Alignment.bottomCenter,
-                          colors: darkgradiedColor,
+                          colors: darkgradientColor,
                         ),
                       ),
                       child: GestureDetector(

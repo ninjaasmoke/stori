@@ -17,7 +17,7 @@ class _InitPageState extends State<InitPage> {
           'stori',
           style: TextStyle(
             fontFamily: TITLE_FONT,
-            letterSpacing: 4.0,
+            letterSpacing: 2.0,
             fontSize: 48.0,
             fontWeight: FontWeight.w900,
             color: accentcolor,
