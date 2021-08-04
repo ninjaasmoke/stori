@@ -54,8 +54,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: BlocConsumer<UserBloc, UserState>(
             builder: (context, state) {
-              if (res == ConnectivityResult.none ||
-                  state is NoConnectionUserState) {
+              if (res == ConnectivityResult.none) {
                 return NoConnectivityPage();
               }
               if (state is InitUserState || state is LoadingUserState) {
