@@ -298,7 +298,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                   },
                   icon: Icon(Icons.share_arrival_time, color: darkTextColor),
                   label: Text(
-                    "\tRemove this book from my list.",
+                    "\tRemove from list.",
                     style: TextStyle(
                       color: darkTextColor,
                       fontFamily:
@@ -352,7 +352,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                         color: primaryTextColor,
                       ),
                       label: Text(
-                        "\tRemove this book from wishlist.",
+                        "\tRemove from wishlist.",
                         style: TextStyle(
                           color: primaryTextColor,
                           fontFamily:
