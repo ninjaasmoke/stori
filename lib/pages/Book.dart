@@ -10,6 +10,7 @@ import 'package:stori/constants.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/BookModel.dart';
+import 'package:stori/models/UserModel.dart';
 
 class BookPage extends StatefulWidget {
   final BookModel book;
@@ -265,40 +266,74 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
           SizedBox(
             height: 8.0,
           ),
-          TextButton.icon(
-            style: TextButton.styleFrom(
-              backgroundColor: primaryTextColor,
-            ),
-            onPressed: () {
-              context
-                  .read<UserBloc>()
-                  .add(UserAddHasBookEvent(bookId: book.id));
-            },
-            icon: Icon(Icons.share_arrival_time, color: darkTextColor),
-            label: Text(
-              "\tI have this.",
-              style: TextStyle(
-                color: darkTextColor,
-                fontFamily:
-                    GoogleFonts.dmSans(fontWeight: FontWeight.w700).fontFamily,
-              ),
-            ),
-          ),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(
-              side: BorderSide(color: primaryTextColor),
-            ),
-            onPressed: () {},
-            icon: Icon(Icons.save_alt, color: primaryTextColor),
-            label: Text(
-              "\t I want this.",
-              style: TextStyle(
-                color: primaryTextColor,
-                fontFamily:
-                    GoogleFonts.dmSans(fontWeight: FontWeight.w700).fontFamily,
-              ),
-            ),
-          ),
+          !context.watch<UserBloc>().currentUser.hasBooks.contains(book.id)
+              ? TextButton.icon(
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryTextColor,
+                  ),
+                  onPressed: () {
+                    context
+                        .read<UserBloc>()
+                        .add(UserAddHasBookEvent(bookId: book.id));
+                  },
+                  icon: Icon(Icons.share_arrival_time, color: darkTextColor),
+                  label: Text(
+                    "\tI have this.",
+                    style: TextStyle(
+                      color: darkTextColor,
+                      fontFamily:
+                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                              .fontFamily,
+                    ),
+                  ),
+                )
+              : TextButton.icon(
+                  style: TextButton.styleFrom(
+                    backgroundColor: primaryTextColor,
+                  ),
+                  onPressed: () {
+                    context
+                        .read<UserBloc>()
+                        .add(UserRemoveHasBookEvent(bookId: book.id));
+                  },
+                  icon: Icon(Icons.share_arrival_time, color: darkTextColor),
+                  label: Text(
+                    "\tRemove this book from my list.",
+                    style: TextStyle(
+                      color: darkTextColor,
+                      fontFamily:
+                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                              .fontFamily,
+                    ),
+                  ),
+                ),
+          !context.watch<UserBloc>().currentUser.hasBooks.contains(book.id) &&
+                  !context
+                      .watch<UserBloc>()
+                      .currentUser
+                      .wantBooks
+                      .contains(book.id)
+              ? OutlinedButton.icon(
+                  style: OutlinedButton.styleFrom(
+                    side: BorderSide(color: primaryTextColor),
+                  ),
+                  onPressed: () {
+                    context
+                        .read<UserBloc>()
+                        .add(UserAddWantBookEvent(bookId: book.id));
+                  },
+                  icon: Icon(Icons.save_alt, color: primaryTextColor),
+                  label: Text(
+                    "\t I want this.",
+                    style: TextStyle(
+                      color: primaryTextColor,
+                      fontFamily:
+                          GoogleFonts.dmSans(fontWeight: FontWeight.w700)
+                              .fontFamily,
+                    ),
+                  ),
+                )
+              : Container(),
           SizedBox(
             height: 8.0,
           ),

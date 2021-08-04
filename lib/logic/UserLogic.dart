@@ -2,8 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:stori/models/BookModel.dart';
 import 'package:stori/models/UserModel.dart';
 import 'package:stori/services/auth.dart';
+import 'package:stori/services/books.dart';
 import 'package:stori/services/store.dart';
 
 // Events
@@ -75,7 +77,13 @@ class LoggingOutUserState extends UserState {
 class LoggedInUserState extends UserState {
   final AppUser user;
   final String loggedInMessage;
-  const LoggedInUserState({required this.user, required this.loggedInMessage});
+  final List<BookModel> hasBooks;
+  final List<BookModel> wantBooks;
+  const LoggedInUserState(
+      {required this.user,
+      required this.loggedInMessage,
+      required this.hasBooks,
+      required this.wantBooks});
 }
 
 class LoggedOutUserState extends UserState {
@@ -99,6 +107,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   UserState get initialState => InitUserState();
 
   late AppUser currentUser;
+  List<BookModel> hasBooks = [];
+  List<BookModel> wantBooks = [];
   // RemoteConfig remoteConfig = RemoteConfig.instance;
 
   @override
@@ -115,6 +125,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     //   print("Old vals");
     //   print(remoteConfig.getString('welcome_message'));
     // }
+
     if (event is FetchUserEvent) {
       yield LoadingUserState(loadingMessage: 'Fetching user...');
       try {
@@ -132,9 +143,20 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
           if (_appUser.uid != null && _appUser.uid!.isNotEmpty) {
             currentUser = _appUser;
+            for (var hBook in currentUser.hasBooks) {
+              BookModel _book = await BooksClient().getBook(pattern: hBook);
+              hasBooks.add(_book);
+            }
+            for (var wBook in currentUser.wantBooks) {
+              BookModel _book = await BooksClient().getBook(pattern: wBook);
+              wantBooks.add(_book);
+            }
             yield LoggedInUserState(
-                user: _appUser,
-                loggedInMessage: 'Welcome back, ${currentUser.username}');
+              user: _appUser,
+              hasBooks: hasBooks,
+              wantBooks: wantBooks,
+              loggedInMessage: 'Welcome back, ${currentUser.username}',
+            );
           } else {
             yield LoggedOutUserState();
           }
@@ -161,14 +183,36 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           );
           await _fireStore.addUser(_createUser);
           currentUser = _createUser;
+          for (var hBook in currentUser.hasBooks) {
+            BookModel _book = await BooksClient().getBook(pattern: hBook);
+            hasBooks.add(_book);
+          }
+          for (var wBook in currentUser.wantBooks) {
+            BookModel _book = await BooksClient().getBook(pattern: wBook);
+            wantBooks.add(_book);
+          }
           yield LoggedInUserState(
-              user: _createUser,
-              loggedInMessage: 'Welcome ${currentUser.username}');
+            user: _createUser,
+            loggedInMessage: 'Welcome ${currentUser.username}',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
         } else {
           currentUser = _appUser;
+          for (var hBook in currentUser.hasBooks) {
+            BookModel _book = await BooksClient().getBook(pattern: hBook);
+            hasBooks.add(_book);
+          }
+          for (var wBook in currentUser.wantBooks) {
+            BookModel _book = await BooksClient().getBook(pattern: wBook);
+            wantBooks.add(_book);
+          }
           yield LoggedInUserState(
-              user: _appUser,
-              loggedInMessage: 'Welcome back, ${currentUser.username}');
+            user: _appUser,
+            loggedInMessage: 'Welcome back, ${currentUser.username}',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
         }
         SharedPreferences _prefs = await SharedPreferences.getInstance();
 
@@ -197,28 +241,120 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         await _fireStore.updateUser(event.appUser);
         currentUser = event.appUser;
         yield LoggedInUserState(
-            user: event.appUser,
-            loggedInMessage: 'Welcome ${currentUser.username}');
+          user: event.appUser,
+          loggedInMessage: 'Welcome ${currentUser.username}',
+          hasBooks: hasBooks,
+          wantBooks: wantBooks,
+        );
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UserAddHasBookEvent) {
       yield UpdatingUserState(updatingMessage: 'Adding book...');
       try {
-        FireStoreService _fireStore = FireStoreService();
-        await _fireStore.addBook(
-          currentUser.uid ?? '',
-          'hasBooks',
-          event.bookId,
-        );
-        currentUser.hasBooks.add(event.bookId);
-        yield LoggedInUserState(
-            user: currentUser, loggedInMessage: 'Added book!');
-        if (currentUser.hasBooks.length == 1) {
+        if (currentUser.hasBooks.contains(event.bookId)) {
           yield LoggedInUserState(
             user: currentUser,
-            loggedInMessage: 'Your books will be in My Books section.',
+            loggedInMessage: 'You already have this book!  Check "Your Books".',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
           );
+        } else if (currentUser.wantBooks.contains(event.bookId)) {
+          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+
+          // Remove book from wantBooks List
+          wantBooks.removeWhere((element) => element.id == event.bookId);
+          FireStoreService _fireStore = FireStoreService();
+          await _fireStore.removeBook(
+            currentUser.uid ?? '',
+            'wantBooks',
+            event.bookId,
+          );
+          currentUser.wantBooks.remove(event.bookId);
+
+          // Add book to hasBooks List
+          hasBooks.add(_book);
+          await _fireStore.addBook(
+            currentUser.uid ?? '',
+            'hasBooks',
+            event.bookId,
+          );
+          currentUser.hasBooks.add(event.bookId);
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Glad you found it!',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+        } else {
+          FireStoreService _fireStore = FireStoreService();
+          await _fireStore.addBook(
+            currentUser.uid ?? '',
+            'hasBooks',
+            event.bookId,
+          );
+          currentUser.hasBooks.add(event.bookId);
+          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+          hasBooks.add(_book);
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Soo cool!!! Added book to your list.',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+          if (currentUser.hasBooks.length == 1) {
+            yield LoggedInUserState(
+              user: currentUser,
+              loggedInMessage: 'It will be in "Your Books" section.',
+              hasBooks: hasBooks,
+              wantBooks: wantBooks,
+            );
+          }
+        }
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is UserAddWantBookEvent) {
+      yield UpdatingUserState(updatingMessage: 'Adding book...');
+      try {
+        FireStoreService _fireStore = FireStoreService();
+        if (currentUser.wantBooks.contains(event.bookId)) {
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Book already in wanted books list!',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+        } else if (currentUser.hasBooks.contains(event.bookId)) {
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'You already have this book!',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+        } else {
+          await _fireStore.addBook(
+            currentUser.uid ?? '',
+            'wantBooks',
+            event.bookId,
+          );
+          currentUser.wantBooks.add(event.bookId);
+          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+          wantBooks.add(_book);
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Added book to wanted books!',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
+          if (currentUser.wantBooks.length == 1) {
+            yield LoggedInUserState(
+              user: currentUser,
+              loggedInMessage: 'It will be in "Your Books" section.',
+              hasBooks: hasBooks,
+              wantBooks: wantBooks,
+            );
+          }
         }
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());

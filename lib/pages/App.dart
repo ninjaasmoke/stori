@@ -57,7 +57,13 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
               builder: (co, st) {
                 return Scaffold(
                   appBar: _appBar(s.user.photoURL, c, _colorTween.value),
-                  body: _recBooksBody(c, s),
+                  body: IndexedStack(
+                    index: _currentBodyIndex,
+                    children: [
+                      _recBooksBody(c, s),
+                      _myBooksBody(c, s),
+                    ],
+                  ),
                   extendBodyBehindAppBar: true,
                   bottomNavigationBar: _bottomNavBar(),
                 );
@@ -148,7 +154,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
           icon: Icon(
             _currentBodyIndex == 1 ? Icons.book : Icons.book_outlined,
           ),
-          label: "My Books",
+          label: "Your Books",
         ),
       ],
     );
@@ -280,18 +286,23 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
           SizedBox(
             height: 12.0,
           ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
-            child: Text(
-              title,
-              style: TextStyle(
-                color: primaryTextColor,
-                fontSize: 18.0,
-                fontWeight: FontWeight.w900,
-                fontFamily:
-                    GoogleFonts.raleway(fontWeight: FontWeight.w800).fontFamily,
+          Row(
+            children: [
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+                child: Text(
+                  title,
+                  style: TextStyle(
+                    color: primaryTextColor,
+                    fontSize: 18.0,
+                    fontWeight: FontWeight.w900,
+                    fontFamily: GoogleFonts.raleway(fontWeight: FontWeight.w800)
+                        .fontFamily,
+                  ),
+                ),
               ),
-            ),
+            ],
           ),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
@@ -321,6 +332,28 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _myBooksBody(BuildContext context, LoggedInUserState userState) {
+    return Column(
+      children: [
+        SizedBox(
+          height: MediaQuery.of(context).size.height * 0.08,
+        ),
+        if (userState is LoggedInUserState && userState.hasBooks.isNotEmpty)
+          _booksRow(
+            userState.hasBooks.reversed.toList(),
+            "Books you have",
+            context,
+          ),
+        if (userState is LoggedInUserState && userState.wantBooks.isNotEmpty)
+          _booksRow(
+            userState.wantBooks.reversed.toList(),
+            "Books you want",
+            context,
+          ),
+      ],
     );
   }
 }
