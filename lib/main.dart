@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(
                     customSnackBar(
-                      text: "Welcome ${state.user.username}",
+                      text: state.loggedInMessage,
                       milli: 2000,
                     ),
                   );
