@@ -142,21 +142,33 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
       selectedItemColor: primaryTextColor,
       selectedFontSize: 11.0,
       unselectedFontSize: 11.0,
-      iconSize: 20.0,
+      iconSize: 18.0,
       items: [
         BottomNavigationBarItem(
-          icon: Icon(
-            _currentBodyIndex == 0
-                ? CupertinoIcons.house_fill
-                : CupertinoIcons.house,
+          icon: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 2.0),
+            child: SizedBox(
+              height: 16.0,
+              width: 16.0,
+              child: ImageIcon(
+                AssetImage(
+                  _currentBodyIndex == 0
+                      ? 'assets/icons/home_.png'
+                      : 'assets/icons/home.png',
+                ),
+              ),
+            ),
           ),
           label: "Home",
         ),
         BottomNavigationBarItem(
-          icon: Icon(
-            _currentBodyIndex == 1
-                ? CupertinoIcons.book_fill
-                : CupertinoIcons.book,
+          icon: Padding(
+            padding: const EdgeInsets.only(bottom: 2.0),
+            child: Icon(
+              _currentBodyIndex == 1
+                  ? CupertinoIcons.heart_fill
+                  : CupertinoIcons.heart,
+            ),
           ),
           label: "Your Books",
         ),
