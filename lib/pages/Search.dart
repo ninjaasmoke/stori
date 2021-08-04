@@ -157,7 +157,7 @@ class _SearchPageState extends State<SearchPage> {
             ),
             AnimatedContainer(
               duration: Duration(milliseconds: 200),
-              width: searchEnabled ? 26 : 20,
+              width: searchEnabled ? 20 : 20,
             ),
             Container(
               width: MediaQuery.of(context).size.width - 180.0,
