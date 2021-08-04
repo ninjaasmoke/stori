@@ -263,22 +263,22 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           BookModel _book = await BooksClient().getBook(pattern: event.bookId);
 
           // Remove book from wantBooks List
-          wantBooks.removeWhere((element) => element.id == event.bookId);
           FireStoreService _fireStore = FireStoreService();
           await _fireStore.removeBook(
             currentUser.uid ?? '',
             'wantBooks',
             event.bookId,
           );
+          wantBooks.removeWhere((element) => element.id == event.bookId);
           currentUser.wantBooks.remove(event.bookId);
 
           // Add book to hasBooks List
-          hasBooks.add(_book);
           await _fireStore.addBook(
             currentUser.uid ?? '',
             'hasBooks',
             event.bookId,
           );
+          hasBooks.add(_book);
           currentUser.hasBooks.add(event.bookId);
           yield LoggedInUserState(
             user: currentUser,
@@ -338,9 +338,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             'wantBooks',
             event.bookId,
           );
-          currentUser.wantBooks.add(event.bookId);
           BookModel _book = await BooksClient().getBook(pattern: event.bookId);
           wantBooks.add(_book);
+          currentUser.wantBooks.add(event.bookId);
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Added book to wanted books!',
@@ -355,6 +355,28 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               wantBooks: wantBooks,
             );
           }
+        }
+      } catch (e) {
+        yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is UserRemoveHasBookEvent) {
+      yield UpdatingUserState(updatingMessage: 'Removing book...');
+      try {
+        if (currentUser.hasBooks.contains(event.bookId)) {
+          FireStoreService _fireStore = FireStoreService();
+          await _fireStore.removeBook(
+            currentUser.uid ?? '',
+            'hasBooks',
+            event.bookId,
+          );
+          hasBooks.removeWhere((element) => element.id == event.bookId);
+          currentUser.hasBooks.remove(event.bookId);
+          yield LoggedInUserState(
+            user: currentUser,
+            loggedInMessage: 'Removed book from your list.',
+            hasBooks: hasBooks,
+            wantBooks: wantBooks,
+          );
         }
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
