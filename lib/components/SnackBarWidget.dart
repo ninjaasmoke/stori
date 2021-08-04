@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/constants.dart';
 
 SnackBar customSnackBar({required String text, int milli = 300}) {
   return SnackBar(
     content: Text(
       text,
-      style: TextStyle(),
+      style: GoogleFonts.nunito(
+        color: primaryTextColor,
+        fontWeight: FontWeight.w600,
+      ),
     ),
     duration: Duration(milliseconds: milli),
     backgroundColor: snackBarcolor,
