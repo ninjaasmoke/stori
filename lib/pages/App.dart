@@ -295,12 +295,12 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
 
   Widget _booksRow(List<BookModel> books, String title, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: 12.0,
+            height: 8.0,
           ),
           Row(
             children: [

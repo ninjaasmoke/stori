@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 final Color accentcolor = new Color(0xFFE20A16);
-final Color snackBarcolor = new Color(0xFF101010);
-final Color bottomNavBarColor = Color(0xFF101010);
+final Color snackBarcolor = new Color(0xFF141414);
+final Color bottomNavBarColor = Color(0xFF141414);
 
 final Color scaffoldBGColor = new Color(0xFF000000);
 final Color appBarBGColor = new Color(0xFF080808);
