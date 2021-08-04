@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-final Color accentcolor = new Color(0xFFE20A16);
-final Color snackBarcolor = new Color(0xFF141414);
-final Color bottomNavBarColor = Color(0xFF141414);
+const Color accentcolor = Color(0xFFE20A16);
+const Color snackBarcolor = Color(0xFF141414);
+const Color bottomNavBarColor = Color(0xFF141414);
 
-final Color scaffoldBGColor = new Color(0xFF000000);
-final Color appBarBGColor = new Color(0xFF080808);
+const Color scaffoldBGColor = Color(0xFF000000);
+final Color appBarBGColor = Color(0xFF080808);
 
-final Color primaryTextColor = new Color(0xFFEFEFEF);
-final Color secondaryTextColor = Color(0xffCECECE);
-final Color tertiaryTextColor = Colors.grey;
+const Color primaryTextColor = Color(0xFFEFEFEF);
+const Color secondaryTextColor = Color(0xffCECECE);
+const Color tertiaryTextColor = Colors.grey;
 
-final List<Color> darkgradiedColor = [
+const List<Color> darkgradiedColor = [
   Color(0x99000000),
   Color(0xaa000000),
   Color(0xbb000000),

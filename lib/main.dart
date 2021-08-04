@@ -7,11 +7,13 @@ import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
+import 'package:stori/logic/TourLogic.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/pages/App.dart';
 import 'package:stori/pages/Init.dart';
 import 'package:stori/pages/Login.dart';
 import 'package:stori/pages/NoConnectivity.dart';
+import 'package:stori/pages/Tour.dart';
 import 'package:stori/theme.dart';
 
 var res;
@@ -61,6 +63,9 @@ class MyApp extends StatelessWidget {
               }
               if (state is LoggedInUserState) {
                 return AppPage();
+              }
+              if (state is NewLoggedInUserState) {
+                return TourPage();
               }
               if (state is LoggedOutUserState ||
                   state is LoggingInUserState ||
