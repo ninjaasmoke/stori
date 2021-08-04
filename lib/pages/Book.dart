@@ -260,7 +260,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
           SizedBox(
             height: 8.0,
           ),
-          !context.watch<UserBloc>().currentUser.hasBooks.contains(book.id)
+          !context.watch<UserBloc>().currentUser.hasBooks.contains(book.title)
               ? TextButton.icon(
                   style: TextButton.styleFrom(
                     backgroundColor: primaryTextColor,
@@ -268,7 +268,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                   onPressed: () {
                     context
                         .read<UserBloc>()
-                        .add(UserAddHasBookEvent(bookId: book.id));
+                        .add(UserAddHasBookEvent(bookName: book.title));
                   },
                   icon: Icon(Icons.share_arrival_time, color: darkTextColor),
                   label: Text(
@@ -288,7 +288,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                   onPressed: () {
                     context
                         .read<UserBloc>()
-                        .add(UserRemoveHasBookEvent(bookId: book.id));
+                        .add(UserRemoveHasBookEvent(bookName: book.title));
                   },
                   icon: Icon(Icons.share_arrival_time, color: darkTextColor),
                   label: Text(
@@ -301,12 +301,16 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                     ),
                   ),
                 ),
-          !context.watch<UserBloc>().currentUser.hasBooks.contains(book.id) &&
+          !context
+                      .watch<UserBloc>()
+                      .currentUser
+                      .hasBooks
+                      .contains(book.title) &&
                   !context
                       .watch<UserBloc>()
                       .currentUser
                       .wantBooks
-                      .contains(book.id)
+                      .contains(book.title)
               ? OutlinedButton.icon(
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: primaryTextColor),
@@ -314,7 +318,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                   onPressed: () {
                     context
                         .read<UserBloc>()
-                        .add(UserAddWantBookEvent(bookId: book.id));
+                        .add(UserAddWantBookEvent(bookName: book.title));
                   },
                   icon: Icon(Icons.save_alt, color: primaryTextColor),
                   label: Text(
@@ -331,7 +335,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                       .watch<UserBloc>()
                       .currentUser
                       .hasBooks
-                      .contains(book.id)
+                      .contains(book.title)
                   ? OutlinedButton.icon(
                       style: OutlinedButton.styleFrom(
                         side: BorderSide(color: primaryTextColor),
@@ -339,7 +343,7 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                       onPressed: () {
                         context
                             .read<UserBloc>()
-                            .add(UserRemoveWantBookEvent(bookId: book.id));
+                            .add(UserRemoveWantBookEvent(bookName: book.title));
                       },
                       icon: Icon(
                         Icons.remove_circle_outline_rounded,

@@ -31,23 +31,23 @@ class UpdateUserEvent extends UserEvent {
 }
 
 class UserAddHasBookEvent extends UserEvent {
-  final String bookId;
-  const UserAddHasBookEvent({required this.bookId});
+  final String bookName;
+  const UserAddHasBookEvent({required this.bookName});
 }
 
 class UserAddWantBookEvent extends UserEvent {
-  final String bookId;
-  const UserAddWantBookEvent({required this.bookId});
+  final String bookName;
+  const UserAddWantBookEvent({required this.bookName});
 }
 
 class UserRemoveHasBookEvent extends UserEvent {
-  final String bookId;
-  const UserRemoveHasBookEvent({required this.bookId});
+  final String bookName;
+  const UserRemoveHasBookEvent({required this.bookName});
 }
 
 class UserRemoveWantBookEvent extends UserEvent {
-  final String bookId;
-  const UserRemoveWantBookEvent({required this.bookId});
+  final String bookName;
+  const UserRemoveWantBookEvent({required this.bookName});
 }
 
 // States
@@ -84,6 +84,11 @@ class LoggedInUserState extends UserState {
       required this.loggedInMessage,
       required this.hasBooks,
       required this.wantBooks});
+}
+
+class NewLoggedInUserState extends UserState {
+  final AppUser user;
+  const NewLoggedInUserState({required this.user});
 }
 
 class LoggedOutUserState extends UserState {
@@ -151,11 +156,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               BookModel _book = await BooksClient().getBook(pattern: wBook);
               wantBooks.add(_book);
             }
+            // TODO : remove
+            // yield NewLoggedInUserState(user: _appUser);
             yield LoggedInUserState(
               user: _appUser,
               hasBooks: hasBooks,
               wantBooks: wantBooks,
-              loggedInMessage: 'Welcome back, ${currentUser.username}',
+              loggedInMessage:
+                  'Welcome back, ${currentUser.username!.split(" ")[0]}',
             );
           } else {
             yield LoggedOutUserState();
@@ -193,12 +201,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           //   BookModel _book = await BooksClient().getBook(pattern: wBook);
           //   wantBooks.add(_book);
           // }
-          yield LoggedInUserState(
-            user: _createUser,
-            loggedInMessage: 'Welcome ${currentUser.username}',
-            hasBooks: hasBooks,
-            wantBooks: wantBooks,
-          );
+          yield NewLoggedInUserState(user: _createUser);
         } else {
           currentUser = _appUser;
           for (var hBook in currentUser.hasBooks) {
@@ -211,7 +214,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           }
           yield LoggedInUserState(
             user: _appUser,
-            loggedInMessage: 'Welcome back, ${currentUser.username}',
+            loggedInMessage:
+                'Welcome back, ${currentUser.username!.split(' ')[0]}',
             hasBooks: hasBooks,
             wantBooks: wantBooks,
           );
@@ -252,7 +256,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         currentUser = event.appUser;
         yield LoggedInUserState(
           user: event.appUser,
-          loggedInMessage: 'Welcome ${currentUser.username}',
+          loggedInMessage: 'Welcome ${currentUser.username!.split(' ')[0]}',
           hasBooks: hasBooks,
           wantBooks: wantBooks,
         );
@@ -262,34 +266,35 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } else if (event is UserAddHasBookEvent) {
       yield UpdatingUserState(updatingMessage: 'Adding book...');
       try {
-        if (currentUser.hasBooks.contains(event.bookId)) {
+        if (currentUser.hasBooks.contains(event.bookName)) {
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'You already have this book!  Check "Your Books".',
             hasBooks: hasBooks,
             wantBooks: wantBooks,
           );
-        } else if (currentUser.wantBooks.contains(event.bookId)) {
-          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+        } else if (currentUser.wantBooks.contains(event.bookName)) {
+          BookModel _book =
+              await BooksClient().getBook(pattern: event.bookName);
 
           // Remove book from wantBooks List
           FireStoreService _fireStore = FireStoreService();
           await _fireStore.removeBook(
             currentUser.uid ?? '',
             'wantBooks',
-            event.bookId,
+            event.bookName,
           );
-          wantBooks.removeWhere((element) => element.id == event.bookId);
-          currentUser.wantBooks.remove(event.bookId);
+          wantBooks.removeWhere((element) => element.title == event.bookName);
+          currentUser.wantBooks.remove(event.bookName);
 
           // Add book to hasBooks List
           await _fireStore.addBook(
             currentUser.uid ?? '',
             'hasBooks',
-            event.bookId,
+            event.bookName,
           );
           hasBooks.add(_book);
-          currentUser.hasBooks.add(event.bookId);
+          currentUser.hasBooks.add(event.bookName);
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Glad you found it!',
@@ -301,10 +306,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           await _fireStore.addBook(
             currentUser.uid ?? '',
             'hasBooks',
-            event.bookId,
+            event.bookName,
           );
-          currentUser.hasBooks.add(event.bookId);
-          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+          currentUser.hasBooks.add(event.bookName);
+          BookModel _book =
+              await BooksClient().getBook(pattern: event.bookName);
           hasBooks.add(_book);
           yield LoggedInUserState(
             user: currentUser,
@@ -328,14 +334,14 @@ class UserBloc extends Bloc<UserEvent, UserState> {
       yield UpdatingUserState(updatingMessage: 'Adding book...');
       try {
         FireStoreService _fireStore = FireStoreService();
-        if (currentUser.wantBooks.contains(event.bookId)) {
+        if (currentUser.wantBooks.contains(event.bookName)) {
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Book already in wanted books list!',
             hasBooks: hasBooks,
             wantBooks: wantBooks,
           );
-        } else if (currentUser.hasBooks.contains(event.bookId)) {
+        } else if (currentUser.hasBooks.contains(event.bookName)) {
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'You already have this book!',
@@ -346,11 +352,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           await _fireStore.addBook(
             currentUser.uid ?? '',
             'wantBooks',
-            event.bookId,
+            event.bookName,
           );
-          BookModel _book = await BooksClient().getBook(pattern: event.bookId);
+          BookModel _book =
+              await BooksClient().getBook(pattern: event.bookName);
           wantBooks.add(_book);
-          currentUser.wantBooks.add(event.bookId);
+          currentUser.wantBooks.add(event.bookName);
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Added book to wanted books!',
@@ -372,15 +379,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } else if (event is UserRemoveHasBookEvent) {
       yield UpdatingUserState(updatingMessage: 'Removing book...');
       try {
-        if (currentUser.hasBooks.contains(event.bookId)) {
+        if (currentUser.hasBooks.contains(event.bookName)) {
           FireStoreService _fireStore = FireStoreService();
           await _fireStore.removeBook(
             currentUser.uid ?? '',
             'hasBooks',
-            event.bookId,
+            event.bookName,
           );
-          hasBooks.removeWhere((element) => element.id == event.bookId);
-          currentUser.hasBooks.remove(event.bookId);
+          hasBooks.removeWhere((element) => element.title == event.bookName);
+          currentUser.hasBooks.remove(event.bookName);
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Removed book from your list.',
@@ -394,15 +401,15 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     } else if (event is UserRemoveWantBookEvent) {
       yield UpdatingUserState(updatingMessage: 'Removing book...');
       try {
-        if (currentUser.wantBooks.contains(event.bookId)) {
+        if (currentUser.wantBooks.contains(event.bookName)) {
           FireStoreService _fireStore = FireStoreService();
           await _fireStore.removeBook(
             currentUser.uid ?? '',
             'wantBooks',
-            event.bookId,
+            event.bookName,
           );
-          wantBooks.removeWhere((element) => element.id == event.bookId);
-          currentUser.wantBooks.remove(event.bookId);
+          wantBooks.removeWhere((element) => element.title == event.bookName);
+          currentUser.wantBooks.remove(event.bookName);
           yield LoggedInUserState(
             user: currentUser,
             loggedInMessage: 'Removed book from your list.',
