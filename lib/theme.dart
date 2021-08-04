@@ -21,5 +21,5 @@ ThemeData themeData = ThemeData(
   }),
   hoverColor: accentcolor,
   splashColor: accentcolor,
-  fontFamily: GoogleFonts.poppins().fontFamily,
+  fontFamily: GoogleFonts.nunito().fontFamily,
 );
