@@ -295,7 +295,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
 
   Widget _booksRow(List<BookModel> books, String title, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -306,12 +306,12 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
             children: [
               Padding(
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+                    const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
                 child: Text(
                   title,
                   style: TextStyle(
                     color: primaryTextColor,
-                    fontSize: 18.0,
+                    fontSize: 20.0,
                     fontWeight: FontWeight.w900,
                     fontFamily: GoogleFonts.raleway(fontWeight: FontWeight.w800)
                         .fontFamily,
