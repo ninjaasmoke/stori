@@ -8,6 +8,7 @@ import 'package:stori/components/BookCard.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
+import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/BookModel.dart';
 
 class BookPage extends StatefulWidget {
@@ -52,32 +53,33 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-        animation: _colorTween,
-        builder: (c, s) {
-          return Scaffold(
-            extendBodyBehindAppBar: true,
-            appBar: AppBar(
-              backgroundColor: _colorTween.value,
-              title: Text(
-                widget.book.title,
-                style: TextStyle(
-                  color: _textColorTween.value,
-                ),
+      animation: _colorTween,
+      builder: (c, s) {
+        return Scaffold(
+          extendBodyBehindAppBar: true,
+          appBar: AppBar(
+            backgroundColor: _colorTween.value,
+            title: Text(
+              widget.book.title,
+              style: TextStyle(
+                color: _textColorTween.value,
               ),
-              leading: IconButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.arrow_back,
-                  color: secondaryTextColor,
-                ),
-              ),
-              elevation: 0,
             ),
-            body: _body(widget.book, context),
-          );
-        });
+            leading: IconButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              icon: Icon(
+                Icons.arrow_back,
+                color: secondaryTextColor,
+              ),
+            ),
+            elevation: 0,
+          ),
+          body: _body(widget.book, context),
+        );
+      },
+    );
   }
 
   Widget _body(BookModel book, BuildContext context) {
@@ -271,7 +273,11 @@ class _BookPageState extends State<BookPage> with TickerProviderStateMixin {
                   style: TextButton.styleFrom(
                     backgroundColor: primaryTextColor,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    context
+                        .read<UserBloc>()
+                        .add(UserAddHasBookEvent(bookId: book.id));
+                  },
                   icon: Icon(Icons.share_arrival_time, color: darkTextColor),
                   label: Text(
                     "\tI have this.",
