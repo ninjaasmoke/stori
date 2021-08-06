@@ -21,6 +21,7 @@ class LoginPage extends StatelessWidget {
 
   Widget _body(BuildContext context, UserState state) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/bg/bg.jpg'),
@@ -46,7 +47,7 @@ class LoginPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             _banner(),
-            _loginButton(context),
+            _loginButton(context, state),
           ],
         ),
       ),
@@ -80,51 +81,58 @@ class LoginPage extends StatelessWidget {
     );
   }
 
-  Widget _loginButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: TextButton(
-        style: TextButton.styleFrom(
-          backgroundColor: Colors.white,
-          padding: EdgeInsets.all(10.0),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(40),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 20,
-              width: 20,
-              child: Image.asset('assets/gIcon.png'),
-            ),
-            SizedBox(
-              width: 30,
-            ),
-            Padding(
-              padding: const EdgeInsets.only(top: 4.0),
-              child: Center(
-                child: Text(
-                  "Continue with Google",
-                  style: GoogleFonts.kumbhSans(
-                    color: darkTextColor,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.0,
-                  ),
+  Widget _loginButton(BuildContext context, UserState state) {
+    return state is LoggedOutUserState
+        ? Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24.0),
+            child: TextButton(
+              style: TextButton.styleFrom(
+                backgroundColor: Colors.white,
+                padding: EdgeInsets.all(10.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(40),
                 ),
               ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
+                    width: 20,
+                    child: Image.asset('assets/gIcon.png'),
+                  ),
+                  SizedBox(
+                    width: 30,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4.0),
+                    child: Center(
+                      child: Text(
+                        "Continue with Google",
+                        style: GoogleFonts.kumbhSans(
+                          color: darkTextColor,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    width: 14,
+                  ),
+                ],
+              ),
+              onPressed: () {
+                context.read<UserBloc>().add(LoginUserEvent());
+              },
             ),
-            SizedBox(
-              width: 14,
-            ),
-          ],
-        ),
-        onPressed: () {
-          context.read<UserBloc>().add(LoginUserEvent());
-        },
-      ),
-    );
+          )
+        : Container(
+            margin: EdgeInsets.symmetric(vertical: 8.0),
+            height: 30.0,
+            width: 30.0,
+            child: CircularProgressIndicator(),
+          );
   }
 }

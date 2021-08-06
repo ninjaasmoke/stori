@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/logic/UserLogic.dart';
 
@@ -97,7 +98,14 @@ class _TourPageState extends State<TourPage> {
                                 ),
                               ),
                               imgUrls[index].isNotEmpty
-                                  ? Image.network(imgUrls[index])
+                                  ? Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              0.9,
+                                      child: customCachedNetworkImage(
+                                          url: imgUrls[index]),
+                                    )
                                   : Container(),
                             ],
                           );
