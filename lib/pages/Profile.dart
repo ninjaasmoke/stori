@@ -142,6 +142,7 @@ class ProfilePage extends StatelessWidget {
                           hasBooks: user.hasBooks,
                           wantBooks: user.wantBooks,
                           location: user.location,
+                          createdDateTime: user.createdDateTime,
                         );
                         Navigator.pop(context);
                         context

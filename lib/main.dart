@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/logic/ClosestLogic.dart';
+import 'package:stori/logic/PersonLogic.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
@@ -47,6 +48,9 @@ class MyApp extends StatelessWidget {
           create: (context) =>
               ClosestPeopleBloc()..add(FetchClosestPeopleEvent()),
         ),
+        BlocProvider<PersonBloc>(
+          create: (context) => PersonBloc(),
+        ),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
@@ -65,9 +69,6 @@ class MyApp extends StatelessWidget {
               if (state is InitUserState || state is LoadingUserState) {
                 return InitPage();
               }
-              if (state is LoggedInUserState) {
-                return AppPage();
-              }
               if (state is NewLoggedInUserState) {
                 return TourPage();
               }
@@ -76,7 +77,7 @@ class MyApp extends StatelessWidget {
                   state is ErrorUserState) {
                 return LoginPage();
               }
-              return InitPage();
+              return AppPage();
             },
             listener: (context, state) {
               if (res != ConnectivityResult.none) {

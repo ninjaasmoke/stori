@@ -9,6 +9,7 @@ class AppUser {
   final List<String> hasBooks;
   final List<String> wantBooks;
   final GeoPoint location;
+  final String createdDateTime;
 
   AppUser({
     required this.displayName,
@@ -19,6 +20,7 @@ class AppUser {
     required this.hasBooks,
     required this.wantBooks,
     required this.location,
+    required this.createdDateTime,
   });
 
   static AppUser fromJson(Map<String, dynamic> json) {
@@ -34,6 +36,8 @@ class AppUser {
           ? []
           : json["wantBooks"].cast<String>() ?? [],
       location: json["location"] ?? GeoPoint(0.0, 0.0),
+      createdDateTime:
+          json["createdDateTime"] ?? DateTime.now().toIso8601String(),
     );
   }
 
@@ -46,5 +50,6 @@ class AppUser {
         'wantBooks': wantBooks,
         'email': email,
         'location': location,
+        'createdDateTime': createdDateTime,
       };
 }

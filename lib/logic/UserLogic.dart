@@ -55,6 +55,8 @@ class UserRemoveWantBookEvent extends UserEvent {
 // States
 abstract class UserState {
   const UserState();
+
+  get bookOfDay => null;
 }
 
 class InitUserState extends UserState {
@@ -98,8 +100,16 @@ class LoggedOutUserState extends UserState {
 }
 
 class UpdatingUserState extends UserState {
+  final AppUser user;
+  final List<BookModel> hasBooks;
+  final List<BookModel> wantBooks;
   final String updatingMessage;
-  const UpdatingUserState({required this.updatingMessage});
+  const UpdatingUserState({
+    required this.updatingMessage,
+    required this.user,
+    required this.hasBooks,
+    required this.wantBooks,
+  });
 }
 
 class ErrorUserState extends UserState {
@@ -172,7 +182,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           print("User is logged in");
           FireStoreService _fireStore = FireStoreService();
           AppUser _appUser = await _fireStore.getUser(uid);
-          print("Getting closest locs\n\n");
 
           if (_appUser.uid != null && _appUser.uid!.isNotEmpty) {
             currentUser = _appUser;
@@ -222,6 +231,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             wantBooks: [],
             location: GeoPoint(
                 _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0),
+            createdDateTime: DateTime.now().toIso8601String(),
           );
           await _fireStore.addUser(_createUser);
           currentUser = _createUser;
@@ -268,6 +278,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           hasBooks: [],
           wantBooks: [],
           location: GeoPoint(0.0, 0.0),
+          createdDateTime: '',
         );
         hasBooks = [];
         wantBooks = [];
@@ -276,7 +287,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UpdateUserEvent) {
-      yield UpdatingUserState(updatingMessage: 'Updating user...');
+      yield UpdatingUserState(
+        updatingMessage: 'Updating user...',
+        user: currentUser,
+        hasBooks: hasBooks,
+        wantBooks: wantBooks,
+      );
 
       try {
         FireStoreService _fireStore = FireStoreService();
@@ -292,7 +308,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UserAddHasBookEvent) {
-      yield UpdatingUserState(updatingMessage: 'Adding book...');
+      yield UpdatingUserState(
+        updatingMessage: 'Adding book...',
+        user: currentUser,
+        hasBooks: hasBooks,
+        wantBooks: wantBooks,
+      );
       try {
         if (currentUser.hasBooks.contains(event.bookName)) {
           yield LoggedInUserState(
@@ -359,7 +380,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UserAddWantBookEvent) {
-      yield UpdatingUserState(updatingMessage: 'Adding book...');
+      yield UpdatingUserState(
+        updatingMessage: 'Adding book...',
+        user: currentUser,
+        hasBooks: hasBooks,
+        wantBooks: wantBooks,
+      );
       try {
         FireStoreService _fireStore = FireStoreService();
         if (currentUser.wantBooks.contains(event.bookName)) {
@@ -405,7 +431,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UserRemoveHasBookEvent) {
-      yield UpdatingUserState(updatingMessage: 'Removing book...');
+      yield UpdatingUserState(
+        updatingMessage: 'Removing book...',
+        user: currentUser,
+        hasBooks: hasBooks,
+        wantBooks: wantBooks,
+      );
       try {
         if (currentUser.hasBooks.contains(event.bookName)) {
           FireStoreService _fireStore = FireStoreService();
@@ -427,7 +458,12 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         yield ErrorUserState(errorMessage: e.toString());
       }
     } else if (event is UserRemoveWantBookEvent) {
-      yield UpdatingUserState(updatingMessage: 'Removing book...');
+      yield UpdatingUserState(
+        updatingMessage: 'Removing book...',
+        user: currentUser,
+        hasBooks: hasBooks,
+        wantBooks: wantBooks,
+      );
       try {
         if (currentUser.wantBooks.contains(event.bookName)) {
           FireStoreService _fireStore = FireStoreService();

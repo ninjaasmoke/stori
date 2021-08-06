@@ -4,15 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/BookCard.dart';
+import 'package:stori/components/BooksRow.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/helper/utils.dart';
 import 'package:stori/logic/ClosestLogic.dart';
+import 'package:stori/logic/PersonLogic.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/BookModel.dart';
 import 'package:stori/models/UserModel.dart';
 import 'package:stori/pages/Book.dart';
+import 'package:stori/pages/PersonProfile.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
 
@@ -79,21 +82,41 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
       builder: (c, s) {
         if (s is LoggedInUserState) {
           return AnimatedBuilder(
-              animation: _colorTween,
-              builder: (co, st) {
-                return Scaffold(
-                  appBar: _appBar(s.user.photoURL, c, _colorTween.value),
-                  body: IndexedStack(
-                    index: _currentBodyIndex,
-                    children: [
-                      _recBooksBody(c, s),
-                      _myBooksBody(c, s),
-                    ],
-                  ),
-                  extendBodyBehindAppBar: true,
-                  bottomNavigationBar: _bottomNavBar(),
-                );
-              });
+            animation: _colorTween,
+            builder: (co, st) {
+              return Scaffold(
+                appBar: _appBar(s.user.photoURL, c, _colorTween.value),
+                body: IndexedStack(
+                  index: _currentBodyIndex,
+                  children: [
+                    _recBooksBody(c),
+                    _myBooksBody(c, s),
+                  ],
+                ),
+                extendBodyBehindAppBar: true,
+                bottomNavigationBar: _bottomNavBar(),
+              );
+            },
+          );
+        }
+        if (s is UpdatingUserState) {
+          return AnimatedBuilder(
+            animation: _colorTween,
+            builder: (co, st) {
+              return Scaffold(
+                appBar: _appBar(s.user.photoURL, c, _colorTween.value),
+                body: IndexedStack(
+                  index: _currentBodyIndex,
+                  children: [
+                    _recBooksBody(c),
+                    _myBooksBody(c, s),
+                  ],
+                ),
+                extendBodyBehindAppBar: true,
+                bottomNavigationBar: _bottomNavBar(),
+              );
+            },
+          );
         }
         return Center(
           child: CircularProgressIndicator(),
@@ -205,7 +228,89 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _recBooksBody(BuildContext userContext, LoggedInUserState userState) {
+  Widget _recBookOfDay(BuildContext context, BookModel bookOfDay) {
+    return Container(
+      width: MediaQuery.of(context).size.width,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          fit: BoxFit.cover,
+          image: CachedNetworkImageProvider(
+            bookOfDay.imageUrl.isNotEmpty
+                ? bookOfDay.imageUrl
+                : IMAGE_NOT_FOUND_URL,
+          ),
+        ),
+      ),
+      child: Container(
+        padding: EdgeInsets.only(
+          top: MediaQuery.of(context).size.height * 0.1,
+        ),
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: darkgradientColor,
+          ),
+        ),
+        child: GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              CupertinoPageRoute(
+                builder: (context) => BookPage(
+                  book: bookOfDay,
+                ),
+              ),
+            );
+          },
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: 20,
+              ),
+              Container(
+                width: 120,
+                height: 180,
+                child: customCachedNetworkImage(
+                  url: bookOfDay.imageUrl,
+                ),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    bookOfDay.title,
+                    style: TextStyle(
+                      color: primaryTextColor,
+                      fontSize: 18.0,
+                    ),
+                  )
+                ],
+              ),
+              SizedBox(
+                height: 4.0,
+              ),
+              Text(
+                "Book of the day • " + bookOfDay.authors[0],
+                style: TextStyle(
+                  color: tertiaryTextColor,
+                ),
+              ),
+              SizedBox(
+                height: 8,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _recBooksBody(BuildContext userContext) {
     return BlocBuilder<RecBooksBloc, RecBooksState>(
       builder: (context, state) {
         if (state is LoadedRecBooksState)
@@ -216,89 +321,11 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: CachedNetworkImageProvider(
-                          state.bookOfDay.imageUrl.isNotEmpty
-                              ? state.bookOfDay.imageUrl
-                              : IMAGE_NOT_FOUND_URL,
-                        ),
-                      ),
-                    ),
-                    child: Container(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.1,
-                      ),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: darkgradientColor,
-                        ),
-                      ),
-                      child: GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (context) => BookPage(
-                                book: state.bookOfDay,
-                              ),
-                            ),
-                          );
-                        },
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            SizedBox(
-                              height: 20,
-                            ),
-                            Container(
-                              width: 120,
-                              height: 180,
-                              child: customCachedNetworkImage(
-                                url: state.bookOfDay.imageUrl,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10.0,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  state.bookOfDay.title,
-                                  style: TextStyle(
-                                    color: primaryTextColor,
-                                    fontSize: 18.0,
-                                  ),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 4.0,
-                            ),
-                            Text(
-                              "Book of the day • " + state.bookOfDay.authors[0],
-                              style: TextStyle(
-                                color: tertiaryTextColor,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+                  _recBookOfDay(context, state.bookOfDay),
                   Column(
                     children: state.booksList
                         .map(
-                          (e) => _booksRow(
+                          (e) => booksRow(
                             e,
                             state.topics[state.booksList.indexOf(e)],
                             userContext,
@@ -319,66 +346,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _booksRow(List<BookModel> books, String title, BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: 8.0,
-          ),
-          Row(
-            children: [
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 6.0, horizontal: 0.0),
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    color: primaryTextColor,
-                    fontSize: 20.0,
-                    fontWeight: FontWeight.w900,
-                    fontFamily:
-                        GoogleFonts.kumbhSans(fontWeight: FontWeight.w700)
-                            .fontFamily,
-                  ),
-                ),
-              ),
-            ],
-          ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: books
-                  .map(
-                    (book) => GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                            builder: (context) => BookPage(book: book),
-                            fullscreenDialog: false,
-                          ),
-                        );
-                      },
-                      child: Container(
-                        margin: EdgeInsets.only(right: 8.0),
-                        child: bookCard(book),
-                        height: 156,
-                        width: 110,
-                      ),
-                    ),
-                  )
-                  .toList(),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _myBooksBody(BuildContext context, LoggedInUserState userState) {
+  Widget _myBooksBody(BuildContext context, UserState userState) {
     return NotificationListener<ScrollNotification>(
       onNotification: _scrollListener,
       child: SingleChildScrollView(
@@ -388,21 +356,19 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
               height: MediaQuery.of(context).size.height * 0.08,
             ),
             if (userState is LoggedInUserState && userState.hasBooks.isNotEmpty)
-              _booksRow(
+              booksRow(
                 userState.hasBooks.reversed.toList(),
                 "Books you have",
                 context,
               ),
             if (userState is LoggedInUserState &&
                 userState.wantBooks.isNotEmpty)
-              _booksRow(
+              booksRow(
                 userState.wantBooks.reversed.toList(),
                 "Books you want",
                 context,
               ),
-            if (userState is LoggedInUserState &&
-                (userState.hasBooks.isNotEmpty ||
-                    userState.wantBooks.isNotEmpty))
+            if (userState is LoggedInUserState)
               // CustomPaint(
               //   painter: new SpritePainter(_pulseAnimation),
               //   child: new SizedBox(
@@ -494,6 +460,23 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                               double distanceBwUsers = distance(
                                   userState.user.location, user.location);
                               return ListTile(
+                                onTap: () {
+                                  context.read<PersonBloc>().add(
+                                        FetchPersonBooks(
+                                          hasBooks: user.hasBooks,
+                                          wantsBooks: user.wantBooks,
+                                        ),
+                                      );
+                                  Navigator.push(
+                                    context,
+                                    CupertinoPageRoute(
+                                      builder: (context) => PersonProfilePage(
+                                        person: user,
+                                        dist: distanceBwUsers,
+                                      ),
+                                    ),
+                                  );
+                                },
                                 title: Text(
                                   user.username!,
                                   style: GoogleFonts.dmSans(
