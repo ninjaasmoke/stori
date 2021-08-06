@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:stori/models/BookModel.dart';
 import 'package:stori/models/UserModel.dart';
@@ -114,7 +115,32 @@ class UserBloc extends Bloc<UserEvent, UserState> {
   late AppUser currentUser;
   List<BookModel> hasBooks = [];
   List<BookModel> wantBooks = [];
+
+  Location location = new Location();
+  late bool _serviceEnabled;
+  late PermissionStatus _permissionGranted;
+  late LocationData _locationData;
+
   // RemoteConfig remoteConfig = RemoteConfig.instance;
+
+  Future<void> enableLoc() async {
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+    }
+    if (_serviceEnabled != true) {
+      _serviceEnabled = await location.requestService();
+    }
+    if (_permissionGranted == PermissionStatus.denied ||
+        _serviceEnabled != true) {
+      enableLoc();
+    }
+    if (_permissionGranted == PermissionStatus.deniedForever) {
+      throw Exception(
+        "Permission not granted! Please grant permission from device settings.",
+      );
+    }
+  }
 
   @override
   Stream<UserState> mapEventToState(UserEvent event) async* {
@@ -181,6 +207,9 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         FireStoreService _fireStore = FireStoreService();
         AppUser _appUser = await _fireStore.getUser(user!.uid);
         if (_appUser.uid == null || _appUser.uid!.isEmpty) {
+          _serviceEnabled = await location.serviceEnabled();
+          await enableLoc();
+          _locationData = await location.getLocation();
           AppUser _createUser = new AppUser(
             displayName: user.displayName,
             photoURL: user.photoURL,
@@ -188,19 +217,11 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             username: user.displayName,
             hasBooks: [],
             wantBooks: [],
+            latitude: _locationData.latitude!,
+            longitude: _locationData.longitude!,
           );
           await _fireStore.addUser(_createUser);
           currentUser = _createUser;
-
-          // TODO : check if needed
-          // for (var hBook in currentUser.hasBooks) {
-          //   BookModel _book = await BooksClient().getBook(pattern: hBook);
-          //   hasBooks.add(_book);
-          // }
-          // for (var wBook in currentUser.wantBooks) {
-          //   BookModel _book = await BooksClient().getBook(pattern: wBook);
-          //   wantBooks.add(_book);
-          // }
           yield NewLoggedInUserState(user: _createUser);
         } else {
           currentUser = _appUser;
@@ -242,6 +263,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           photoURL: '',
           hasBooks: [],
           wantBooks: [],
+          latitude: 0.0,
+          longitude: 0.0,
         );
         yield LoggedOutUserState();
       } catch (e) {

@@ -2,17 +2,21 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:stori/constants.dart';
 
-Widget customCachedNetworkImage({required String url, String title = ""}) {
+Widget customCachedNetworkImage(
+    {required String url,
+    String title = "",
+    Color bgColor = searchBarColor,
+    Color loadColor = tertiaryTextColor}) {
   return CachedNetworkImage(
     imageUrl: url.isEmpty ? IMAGE_NOT_FOUND_URL : url,
     placeholder: (context, url) => Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(6.0),
-          color: searchBarColor,
+          color: bgColor,
         ),
         child: Center(
           child: CircularProgressIndicator(
-            valueColor: AlwaysStoppedAnimation<Color>(tertiaryTextColor),
+            valueColor: AlwaysStoppedAnimation<Color>(loadColor),
           ),
         )),
     imageBuilder: (context, imageProvider) => Container(

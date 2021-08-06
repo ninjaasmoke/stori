@@ -5,15 +5,18 @@ class AppUser {
   final String? photoURL;
   final List<String> hasBooks;
   final List<String> wantBooks;
+  final double latitude;
+  final double longitude;
 
-  AppUser({
-    required this.displayName,
-    required this.username,
-    required this.uid,
-    required this.photoURL,
-    required this.hasBooks,
-    required this.wantBooks,
-  });
+  AppUser(
+      {required this.displayName,
+      required this.username,
+      required this.uid,
+      required this.photoURL,
+      required this.hasBooks,
+      required this.wantBooks,
+      required this.latitude,
+      required this.longitude});
 
   static AppUser fromJson(Map<String, dynamic> json) {
     return AppUser(
@@ -26,6 +29,8 @@ class AppUser {
       wantBooks: json["wantBooks"] == null
           ? []
           : json["wantBooks"].cast<String>() ?? [],
+      latitude: json["latitude"] ?? 0.0,
+      longitude: json["longitude"] ?? 0.0,
     );
   }
 
@@ -36,5 +41,7 @@ class AppUser {
         'photoURL': photoURL,
         'hasBooks': hasBooks,
         'wantBooks': wantBooks,
+        'latitude': latitude,
+        'longitude': longitude,
       };
 }

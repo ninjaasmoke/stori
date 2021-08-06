@@ -22,8 +22,8 @@ const List<Color> darkgradientColor = [
 
 final Color darkTextColor = Color(0xFF000000);
 
-final Color tileColor = Color(0xff181818);
-final Color searchBarColor = Color(0xff242424);
+const Color tileColor = Color(0xff181818);
+const Color searchBarColor = Color(0xff242424);
 
 final Color lightIconColor = Colors.grey;
 final Color unselectedIconColor = Colors.grey.shade600;

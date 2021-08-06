@@ -85,6 +85,7 @@ class MyApp extends StatelessWidget {
                       text: state.errorMessage.contains("null")
                           ? "Login failed! Try again."
                           : state.errorMessage,
+                      milli: 3000,
                     ),
                   );
                 } else if (state is LoggingInUserState) {

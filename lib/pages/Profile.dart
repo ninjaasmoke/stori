@@ -138,8 +138,10 @@ class ProfilePage extends StatelessWidget {
                           username: _usernameController.text,
                           uid: user.uid,
                           photoURL: user.photoURL,
-                          hasBooks: [],
-                          wantBooks: [],
+                          hasBooks: user.hasBooks,
+                          wantBooks: user.wantBooks,
+                          latitude: user.latitude,
+                          longitude: user.longitude,
                         );
                         Navigator.pop(context);
                         context

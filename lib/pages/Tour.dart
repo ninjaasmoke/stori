@@ -104,7 +104,10 @@ class _TourPageState extends State<TourPage> {
                                           MediaQuery.of(context).size.width *
                                               0.9,
                                       child: customCachedNetworkImage(
-                                          url: imgUrls[index]),
+                                        url: imgUrls[index],
+                                        bgColor: scaffoldBGColor,
+                                        loadColor: scaffoldBGColor,
+                                      ),
                                     )
                                   : Container(),
                             ],

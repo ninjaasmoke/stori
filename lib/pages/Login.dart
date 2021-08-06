@@ -82,7 +82,7 @@ class LoginPage extends StatelessWidget {
   }
 
   Widget _loginButton(BuildContext context, UserState state) {
-    return state is LoggedOutUserState
+    return state is LoggedOutUserState || state is ErrorUserState
         ? Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: TextButton(
