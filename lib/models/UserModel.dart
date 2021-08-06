@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AppUser {
   final String? displayName;
   final String? username;
@@ -5,18 +7,17 @@ class AppUser {
   final String? photoURL;
   final List<String> hasBooks;
   final List<String> wantBooks;
-  final double latitude;
-  final double longitude;
+  final GeoPoint location;
 
-  AppUser(
-      {required this.displayName,
-      required this.username,
-      required this.uid,
-      required this.photoURL,
-      required this.hasBooks,
-      required this.wantBooks,
-      required this.latitude,
-      required this.longitude});
+  AppUser({
+    required this.displayName,
+    required this.username,
+    required this.uid,
+    required this.photoURL,
+    required this.hasBooks,
+    required this.wantBooks,
+    required this.location,
+  });
 
   static AppUser fromJson(Map<String, dynamic> json) {
     return AppUser(
@@ -29,8 +30,7 @@ class AppUser {
       wantBooks: json["wantBooks"] == null
           ? []
           : json["wantBooks"].cast<String>() ?? [],
-      latitude: json["latitude"] ?? 0.0,
-      longitude: json["longitude"] ?? 0.0,
+      location: json["location"] ?? GeoPoint(0.0, 0.0),
     );
   }
 
@@ -41,7 +41,6 @@ class AppUser {
         'photoURL': photoURL,
         'hasBooks': hasBooks,
         'wantBooks': wantBooks,
-        'latitude': latitude,
-        'longitude': longitude,
+        'location': location,
       };
 }

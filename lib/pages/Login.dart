@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,30 +27,33 @@ class LoginPage extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage('assets/bg/bg.jpg'),
-          // fit:
+          // fit: BoxFit.cover,
         ),
       ),
-      child: Container(
-        decoration: BoxDecoration(
-            gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xff000000),
-            Color(0xbb000000),
-            Color(0xbb000000),
-            Color(0xcc000000),
-            Color(0xdd000000),
-            Colors.black,
-            Colors.black,
-          ],
-        )),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            _banner(),
-            _loginButton(context, state),
-          ],
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 2, sigmaY: 2),
+        child: Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xff000000),
+              Color(0xbb000000),
+              Color(0xbb000000),
+              Color(0xcc000000),
+              Color(0xdd000000),
+              // Colors.black,
+              Colors.black,
+            ],
+          )),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _banner(),
+              _loginButton(context, state),
+            ],
+          ),
         ),
       ),
     );

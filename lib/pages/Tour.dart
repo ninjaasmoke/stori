@@ -106,7 +106,7 @@ class _TourPageState extends State<TourPage> {
                                       child: customCachedNetworkImage(
                                         url: imgUrls[index],
                                         bgColor: scaffoldBGColor,
-                                        loadColor: scaffoldBGColor,
+                                        loadColor: tileColor,
                                       ),
                                     )
                                   : Container(),

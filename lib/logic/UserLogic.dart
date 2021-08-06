@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 // import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -137,7 +138,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
     }
     if (_permissionGranted == PermissionStatus.deniedForever) {
       throw Exception(
-        "Permission not granted! Please grant permission from device settings.",
+        "Location permission not granted! Please grant permission from device settings.",
       );
     }
   }
@@ -217,8 +218,8 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             username: user.displayName,
             hasBooks: [],
             wantBooks: [],
-            latitude: _locationData.latitude!,
-            longitude: _locationData.longitude!,
+            location: GeoPoint(
+                _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0),
           );
           await _fireStore.addUser(_createUser);
           currentUser = _createUser;
@@ -263,8 +264,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           photoURL: '',
           hasBooks: [],
           wantBooks: [],
-          latitude: 0.0,
-          longitude: 0.0,
+          location: GeoPoint(0.0, 0.0),
         );
         yield LoggedOutUserState();
       } catch (e) {
