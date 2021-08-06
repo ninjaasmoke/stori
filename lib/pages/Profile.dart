@@ -138,6 +138,7 @@ class ProfilePage extends StatelessWidget {
                           username: _usernameController.text,
                           uid: user.uid,
                           photoURL: user.photoURL,
+                          email: user.email,
                           hasBooks: user.hasBooks,
                           wantBooks: user.wantBooks,
                           location: user.location,

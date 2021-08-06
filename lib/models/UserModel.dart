@@ -5,6 +5,7 @@ class AppUser {
   final String? username;
   final String? uid;
   final String? photoURL;
+  final String? email;
   final List<String> hasBooks;
   final List<String> wantBooks;
   final GeoPoint location;
@@ -14,6 +15,7 @@ class AppUser {
     required this.username,
     required this.uid,
     required this.photoURL,
+    required this.email,
     required this.hasBooks,
     required this.wantBooks,
     required this.location,
@@ -25,6 +27,7 @@ class AppUser {
       username: json["username"],
       uid: json["uid"],
       photoURL: json["photoURL"],
+      email: json["email"],
       hasBooks:
           json["hasBooks"] == null ? [] : json["hasBooks"].cast<String>() ?? [],
       wantBooks: json["wantBooks"] == null
@@ -41,6 +44,7 @@ class AppUser {
         'photoURL': photoURL,
         'hasBooks': hasBooks,
         'wantBooks': wantBooks,
+        'email': email,
         'location': location,
       };
 }

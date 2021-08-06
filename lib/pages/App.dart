@@ -6,9 +6,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:stori/components/BookCard.dart';
 import 'package:stori/components/CustomCachedImage.dart';
 import 'package:stori/constants.dart';
+import 'package:stori/helper/utils.dart';
+import 'package:stori/logic/ClosestLogic.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/UserLogic.dart';
 import 'package:stori/models/BookModel.dart';
+import 'package:stori/models/UserModel.dart';
 import 'package:stori/pages/Book.dart';
 import 'package:stori/pages/Profile.dart';
 import 'package:stori/pages/Search.dart';
@@ -19,7 +22,9 @@ class AppPage extends StatefulWidget {
 }
 
 class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
-  late AnimationController _colorAnimation;
+  late AnimationController _colorAnimation
+      //  _pulseAnimation
+      ;
   late Animation _colorTween;
 
   @override
@@ -28,8 +33,27 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
         AnimationController(vsync: this, duration: Duration(milliseconds: 0));
     _colorTween = ColorTween(begin: Colors.transparent, end: appBarBGColor)
         .animate(_colorAnimation);
+    // _pulseAnimation = new AnimationController(
+    //   vsync: this,
+    // );
+    // _startAnimation();
     super.initState();
   }
+
+  @override
+  void dispose() {
+    _colorAnimation.dispose();
+    // _pulseAnimation.dispose();
+    super.dispose();
+  }
+
+  // void _startAnimation() {
+  //   _pulseAnimation.stop();
+  //   _pulseAnimation.reset();
+  //   _pulseAnimation.repeat(
+  //     period: Duration(milliseconds: 400),
+  //   );
+  // }
 
   bool _scrollListener(ScrollNotification scrollInfo) {
     if (scrollInfo.metrics.axis == Axis.vertical &&
@@ -46,6 +70,8 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
       _currentBodyIndex = index;
     });
   }
+
+  List<AppUser> users = [];
 
   @override
   Widget build(BuildContext context) {
@@ -294,7 +320,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
   }
 
   Widget _booksRow(List<BookModel> books, String title, BuildContext context) {
-    return Padding(
+    return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(vertical: 6.0, horizontal: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -353,36 +379,167 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
   }
 
   Widget _myBooksBody(BuildContext context, LoggedInUserState userState) {
-    return Column(
-      children: [
-        SizedBox(
-          height: MediaQuery.of(context).size.height * 0.08,
-        ),
-        if (userState is LoggedInUserState && userState.hasBooks.isNotEmpty)
-          _booksRow(
-            userState.hasBooks.reversed.toList(),
-            "Books you have",
-            context,
-          ),
-        if (userState is LoggedInUserState && userState.wantBooks.isNotEmpty)
-          _booksRow(
-            userState.wantBooks.reversed.toList(),
-            "Books you want",
-            context,
-          ),
-        if (userState is LoggedInUserState &&
-            userState.wantBooks.isEmpty &&
-            userState.hasBooks.isEmpty)
-          Container(
-            height: MediaQuery.of(context).size.height * 0.8,
-            child: Center(
-              child: Text(
-                "Find some books that you like!",
-                style: TextStyle(color: tertiaryTextColor),
-              ),
+    return NotificationListener<ScrollNotification>(
+      onNotification: _scrollListener,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.08,
             ),
-          )
-      ],
+            if (userState is LoggedInUserState && userState.hasBooks.isNotEmpty)
+              _booksRow(
+                userState.hasBooks.reversed.toList(),
+                "Books you have",
+                context,
+              ),
+            if (userState is LoggedInUserState &&
+                userState.wantBooks.isNotEmpty)
+              _booksRow(
+                userState.wantBooks.reversed.toList(),
+                "Books you want",
+                context,
+              ),
+            if (userState is LoggedInUserState &&
+                (userState.hasBooks.isNotEmpty ||
+                    userState.wantBooks.isNotEmpty))
+              // CustomPaint(
+              //   painter: new SpritePainter(_pulseAnimation),
+              //   child: new SizedBox(
+              //     width: 200.0,
+              //     height: 200.0,
+              //   ),
+              // ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 0.0, vertical: 12.0),
+                child: BlocConsumer<ClosestPeopleBloc, ClosestPeopleState>(
+                    builder: (c, s) {
+                      if (s is InitClosestPeopleState) {
+                        return Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  c
+                                      .read<ClosestPeopleBloc>()
+                                      .add(FetchClosestPeopleEvent());
+                                },
+                                child: Text(
+                                  "Find people to exchange books.",
+                                  style: GoogleFonts.dmSans(
+                                    fontWeight: FontWeight.w700,
+                                    color: darkTextColor,
+                                  ),
+                                ),
+                                style: TextButton.styleFrom(
+                                  backgroundColor: primaryTextColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      } else if (s is FetchedClosestPeopleState) {
+                        users = s.people;
+                      }
+                      return Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 6.0,
+                                  horizontal: 8.0,
+                                ),
+                                child: Text(
+                                  "People around you",
+                                  style: TextStyle(
+                                    color: primaryTextColor,
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.w900,
+                                    fontFamily: GoogleFonts.kumbhSans(
+                                            fontWeight: FontWeight.w700)
+                                        .fontFamily,
+                                  ),
+                                ),
+                              ),
+                              (s is FetchingClosestPeopleState)
+                                  ? Container(
+                                      height: 48.0,
+                                      width: 48.0,
+                                      padding: EdgeInsets.all(14.0),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2.0,
+                                      ),
+                                    )
+                                  : IconButton(
+                                      onPressed: () {
+                                        c
+                                            .read<ClosestPeopleBloc>()
+                                            .add(FetchClosestPeopleEvent());
+                                      },
+                                      icon: Icon(
+                                        Icons.refresh,
+                                        color: lightIconColor,
+                                      ),
+                                    ),
+                            ],
+                          ),
+                          Column(
+                            children: users.map((user) {
+                              if (user.uid == userState.user.uid) {
+                                return Container();
+                              }
+                              double distanceBwUsers = distance(
+                                  userState.user.location, user.location);
+                              return ListTile(
+                                title: Text(
+                                  user.username!,
+                                  style: GoogleFonts.dmSans(
+                                    color: primaryTextColor,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  '$distanceBwUsers km',
+                                  style: GoogleFonts.dmSans(
+                                    color: secondaryTextColor,
+                                  ),
+                                ),
+                                leading: CircleAvatar(
+                                  child: customCachedNetworkImage(
+                                    url: user.photoURL!,
+                                  ),
+                                ),
+                                trailing: Icon(
+                                  CupertinoIcons.forward,
+                                  size: 20.0,
+                                  color: tertiaryTextColor,
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
+                      );
+                    },
+                    listener: (c, s) {}),
+              ),
+            if (userState is LoggedInUserState &&
+                userState.wantBooks.isEmpty &&
+                userState.hasBooks.isEmpty)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.8,
+                child: Center(
+                  child: Text(
+                    "Find some books that you like!",
+                    style: TextStyle(color: tertiaryTextColor),
+                  ),
+                ),
+              )
+          ],
+        ),
+      ),
     );
   }
 }

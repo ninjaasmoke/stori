@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/components/SnackBarWidget.dart';
+import 'package:stori/logic/ClosestLogic.dart';
 import 'package:stori/logic/RecomendedBooksBloc.dart';
 import 'package:stori/logic/SearchBooksLogic.dart';
 import 'package:stori/logic/SimilarBooksLogic.dart';
@@ -41,7 +42,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<SimilarBooksBloc>(
           create: (context) => SimilarBooksBloc(),
-        )
+        ),
+        BlocProvider<ClosestPeopleBloc>(
+          create: (context) =>
+              ClosestPeopleBloc()..add(FetchClosestPeopleEvent()),
+        ),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(

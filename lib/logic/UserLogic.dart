@@ -172,6 +172,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           print("User is logged in");
           FireStoreService _fireStore = FireStoreService();
           AppUser _appUser = await _fireStore.getUser(uid);
+          print("Getting closest locs\n\n");
 
           if (_appUser.uid != null && _appUser.uid!.isNotEmpty) {
             currentUser = _appUser;
@@ -216,6 +217,7 @@ class UserBloc extends Bloc<UserEvent, UserState> {
             photoURL: user.photoURL,
             uid: user.uid,
             username: user.displayName,
+            email: user.email,
             hasBooks: [],
             wantBooks: [],
             location: GeoPoint(
@@ -262,10 +264,13 @@ class UserBloc extends Bloc<UserEvent, UserState> {
           username: '',
           uid: '',
           photoURL: '',
+          email: '',
           hasBooks: [],
           wantBooks: [],
           location: GeoPoint(0.0, 0.0),
         );
+        hasBooks = [];
+        wantBooks = [];
         yield LoggedOutUserState();
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
