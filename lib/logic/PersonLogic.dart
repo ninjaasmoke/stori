@@ -44,17 +44,21 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   @override
   Stream<PersonState> mapEventToState(PersonEvent event) async* {
     if (event is FetchPersonBooks) {
-      yield LoadingPersonBooksState(loadingMessage: 'Fetching books...');
+      yield LoadingPersonBooksState(loadingMessage: 'Fetching user data...');
       try {
         hasBooks = [];
         wantBooks = [];
         for (var hBook in event.hasBooks) {
           BookModel _book = await BooksClient().getBook(pattern: hBook);
           hasBooks.add(_book);
+          yield FetchedPersonBooksState(
+              hasBooks: hasBooks, wantBooks: wantBooks);
         }
         for (var wBook in event.wantsBooks) {
           BookModel _book = await BooksClient().getBook(pattern: wBook);
           wantBooks.add(_book);
+          yield FetchedPersonBooksState(
+              hasBooks: hasBooks, wantBooks: wantBooks);
         }
         yield FetchedPersonBooksState(hasBooks: hasBooks, wantBooks: wantBooks);
       } catch (e) {

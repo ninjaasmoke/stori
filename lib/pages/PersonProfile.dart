@@ -18,9 +18,9 @@ class PersonProfilePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: appBarBGColor,
-        // title: Text('${person.username!.split(' ')[0]}'),
-        automaticallyImplyLeading: true,
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        // automaticallyImplyLeading: true,
       ),
       body: _body(context),
     );
@@ -31,84 +31,80 @@ class PersonProfilePage extends StatelessWidget {
       : throw 'Could not launch $_url';
 
   Widget _profile() {
-    return Container(
-      height: 124.0,
-      padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12.0),
-      child: Row(
-        children: [
-          Container(
-            width: 100,
-            height: 100,
-            child: Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(8),
-                child: customCachedNetworkImage(url: this.person.photoURL!),
-              ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          width: 100,
+          height: 100,
+          child: Center(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: customCachedNetworkImage(url: this.person.photoURL!),
             ),
           ),
-          SizedBox(
-            width: 12.0,
+        ),
+        SizedBox(
+          width: 12.0,
+        ),
+        Text(
+          '\n${person.displayName}',
+          style: TextStyle(
+            color: primaryTextColor,
+            fontSize: 18.0,
+            fontWeight: FontWeight.bold,
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${person.displayName}',
+        ),
+        Text(
+          '$dist km away from you.',
+          style: TextStyle(
+            color: tertiaryTextColor,
+            fontSize: 16.0,
+          ),
+        ),
+        Text(
+          '${person.email}',
+          style: TextStyle(
+            color: tertiaryTextColor,
+            fontSize: 16.0,
+          ),
+        ),
+        SizedBox(
+          height: 12.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            GestureDetector(
+              onTap: () async {
+                _launchURL('mailto:${person.email}');
+              },
+              child: Text(
+                'Contact',
                 style: TextStyle(
-                  color: primaryTextColor,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              Text(
-                '$dist km away from you.',
-                style: TextStyle(
-                  color: tertiaryTextColor,
+                  color: accentcolor,
+                  decoration: TextDecoration.underline,
                   fontSize: 16.0,
                 ),
               ),
-              Text(
-                '${person.email}',
+            ),
+            Text('\t\t\t'),
+            GestureDetector(
+              onTap: () async {
+                _launchURL('mailto:iumapplications@gmail.com');
+              },
+              child: Text(
+                'Report',
                 style: TextStyle(
-                  color: tertiaryTextColor,
+                  color: accentcolor,
+                  decoration: TextDecoration.underline,
                   fontSize: 16.0,
                 ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      _launchURL('mailto:${person.email}');
-                    },
-                    child: Text(
-                      'Contact',
-                      style: TextStyle(
-                        color: accentcolor,
-                        decoration: TextDecoration.underline,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                  Text('\t\t\t'),
-                  GestureDetector(
-                    onTap: () async {
-                      _launchURL('mailto:iumapplications@gmail.com');
-                    },
-                    child: Text(
-                      'Report User',
-                      style: TextStyle(
-                        color: accentcolor,
-                        decoration: TextDecoration.underline,
-                        fontSize: 16.0,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          )
-        ],
-      ),
+            ),
+          ],
+        )
+      ],
     );
   }
 
@@ -131,14 +127,43 @@ class PersonProfilePage extends StatelessWidget {
                   "Wants these",
                   context,
                 ),
+              if (s.hasBooks.isEmpty && s.wantBooks.isEmpty)
+                Text(
+                  "\nSeems like this person has no books!",
+                  style: TextStyle(
+                    color: primaryTextColor,
+                  ),
+                ),
             ],
           );
         }
+        if (s is LoadingPersonBooksState)
+          return Padding(
+            padding: const EdgeInsets.all(40.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  s.loadingMessage,
+                  style: TextStyle(
+                    color: tertiaryTextColor,
+                  ),
+                ),
+                SizedBox(
+                  width: 20.0,
+                ),
+                SizedBox(
+                  height: 14.0,
+                  width: 14.0,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.0,
+                  ),
+                ),
+              ],
+            ),
+          );
         return Padding(
           padding: const EdgeInsets.all(40.0),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ),
         );
       },
     );
@@ -147,18 +172,20 @@ class PersonProfilePage extends StatelessWidget {
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           _profile(),
           _booksData(context),
-          Center(
+          Padding(
+            padding: const EdgeInsets.all(8.0),
             child: Text(
-              '\n\n"Make them an offer they can\'t refuse"',
-              style: GoogleFonts.kumbhSans(
+              '\nBe respectful when contacting the person.\n',
+              style: GoogleFonts.raleway(
                 color: tertiaryTextColor,
-                fontSize: 18.0,
+                fontWeight: FontWeight.w400,
               ),
             ),
-          )
+          ),
         ],
       ),
     );

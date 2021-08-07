@@ -52,6 +52,11 @@ class UserRemoveWantBookEvent extends UserEvent {
   const UserRemoveWantBookEvent({required this.bookName});
 }
 
+class SetUserLocationEvent extends UserEvent {
+  final GeoPoint location;
+  const SetUserLocationEvent({required this.location});
+}
+
 // States
 abstract class UserState {
   const UserState();
@@ -136,17 +141,10 @@ class UserBloc extends Bloc<UserEvent, UserState> {
 
   Future<void> enableLoc() async {
     _permissionGranted = await location.hasPermission();
+    _serviceEnabled = await location.requestService();
     if (_permissionGranted == PermissionStatus.denied) {
       _permissionGranted = await location.requestPermission();
-    }
-    if (_serviceEnabled != true) {
-      _serviceEnabled = await location.requestService();
-    }
-    if (_permissionGranted == PermissionStatus.denied ||
-        _serviceEnabled != true) {
-      enableLoc();
-    }
-    if (_permissionGranted == PermissionStatus.deniedForever) {
+    } else if (_permissionGranted == PermissionStatus.deniedForever) {
       throw Exception(
         "Location permission not granted! Please grant permission from device settings.",
       );
@@ -218,24 +216,27 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         FireStoreService _fireStore = FireStoreService();
         AppUser _appUser = await _fireStore.getUser(user!.uid);
         if (_appUser.uid == null || _appUser.uid!.isEmpty) {
-          _serviceEnabled = await location.serviceEnabled();
           await enableLoc();
-          _locationData = await location.getLocation();
-          AppUser _createUser = new AppUser(
-            displayName: user.displayName,
-            photoURL: user.photoURL,
-            uid: user.uid,
-            username: user.displayName,
-            email: user.email,
-            hasBooks: [],
-            wantBooks: [],
-            location: GeoPoint(
-                _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0),
-            createdDateTime: DateTime.now().toIso8601String(),
-          );
-          await _fireStore.addUser(_createUser);
-          currentUser = _createUser;
-          yield NewLoggedInUserState(user: _createUser);
+          if (_serviceEnabled == true) {
+            _locationData = await location.getLocation();
+            AppUser _createUser = new AppUser(
+              displayName: user.displayName,
+              photoURL: user.photoURL,
+              uid: user.uid,
+              username: user.displayName,
+              email: user.email,
+              hasBooks: [],
+              wantBooks: [],
+              location: GeoPoint(_locationData.latitude ?? 0.0,
+                  _locationData.longitude ?? 0.0),
+              createdDateTime: DateTime.now().toIso8601String(),
+            );
+            await _fireStore.addUser(_createUser);
+            currentUser = _createUser;
+            yield NewLoggedInUserState(user: _createUser);
+          } else {
+            yield ErrorUserState(errorMessage: 'Location service not enabled');
+          }
         } else {
           currentUser = _appUser;
           for (var hBook in currentUser.hasBooks) {
@@ -483,6 +484,39 @@ class UserBloc extends Bloc<UserEvent, UserState> {
         }
       } catch (e) {
         yield ErrorUserState(errorMessage: e.toString());
+      }
+    } else if (event is SetUserLocationEvent) {
+      // yield UpdatingUserState(
+      //   updatingMessage: 'Updating your location...',
+      //   user: currentUser,
+      //   hasBooks: hasBooks,
+      //   wantBooks: wantBooks,
+      // );
+      try {
+        AppUser _updateUserLoc = new AppUser(
+          displayName: currentUser.displayName,
+          username: currentUser.username,
+          uid: currentUser.uid,
+          photoURL: currentUser.photoURL,
+          email: currentUser.email,
+          hasBooks: currentUser.hasBooks,
+          wantBooks: currentUser.wantBooks,
+          location: event.location,
+          createdDateTime: currentUser.createdDateTime,
+        );
+        FireStoreService _fireStore = FireStoreService();
+        await _fireStore.updateUser(_updateUserLoc);
+        currentUser = _updateUserLoc;
+        yield LoggedInUserState(
+          user: _updateUserLoc,
+          loggedInMessage: '',
+          hasBooks: hasBooks,
+          wantBooks: wantBooks,
+        );
+        // currentUser =
+      } catch (e) {
+        yield ErrorUserState(
+            errorMessage: "Unable to update your location!\n${e.toString()}");
       }
     }
   }

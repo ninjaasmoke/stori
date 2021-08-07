@@ -1,11 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:stori/components/BookCard.dart';
 import 'package:stori/components/BooksRow.dart';
 import 'package:stori/components/CustomCachedImage.dart';
+import 'package:stori/components/SnackBarWidget.dart';
 import 'package:stori/constants.dart';
 import 'package:stori/helper/utils.dart';
 import 'package:stori/logic/ClosestLogic.dart';
@@ -75,6 +76,7 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
   }
 
   List<AppUser> users = [];
+  late GeoPoint _currentLocation;
 
   @override
   Widget build(BuildContext context) {
@@ -368,6 +370,18 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                 "Books you want",
                 context,
               ),
+            if (userState is LoggedInUserState &&
+                userState.wantBooks.isEmpty &&
+                userState.hasBooks.isEmpty)
+              Container(
+                height: MediaQuery.of(context).size.height * 0.5,
+                child: Center(
+                  child: Text(
+                    "Find some books that you like!",
+                    style: TextStyle(color: tertiaryTextColor),
+                  ),
+                ),
+              ),
             if (userState is LoggedInUserState)
               // CustomPaint(
               //   painter: new SpritePainter(_pulseAnimation),
@@ -381,145 +395,146 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                     const EdgeInsets.symmetric(horizontal: 0.0, vertical: 12.0),
                 child: BlocConsumer<ClosestPeopleBloc, ClosestPeopleState>(
                     builder: (c, s) {
-                      if (s is InitClosestPeopleState) {
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {
-                                  c
-                                      .read<ClosestPeopleBloc>()
-                                      .add(FetchClosestPeopleEvent());
-                                },
-                                child: Text(
-                                  "Find people to exchange books.",
-                                  style: GoogleFonts.dmSans(
-                                    fontWeight: FontWeight.w700,
-                                    color: darkTextColor,
-                                  ),
+                  if (s is InitClosestPeopleState) {
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: TextButton(
+                              onPressed: () {
+                                c
+                                    .read<ClosestPeopleBloc>()
+                                    .add(FetchClosestPeopleEvent());
+                              },
+                              child: Text(
+                                "Find people to exchange books.",
+                                style: GoogleFonts.dmSans(
+                                  fontWeight: FontWeight.w700,
+                                  color: darkTextColor,
                                 ),
-                                style: TextButton.styleFrom(
-                                  backgroundColor: primaryTextColor,
-                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                backgroundColor: primaryTextColor,
                               ),
                             ),
-                          ],
-                        );
-                      } else if (s is FetchedClosestPeopleState) {
-                        users = s.people;
-                      }
-                      return Column(
+                          ),
+                        ),
+                      ],
+                    );
+                  } else if (s is FetchedClosestPeopleState) {
+                    users = s.people;
+                    _currentLocation = s.currentLocation;
+                  }
+                  return Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 6.0,
-                                  horizontal: 8.0,
-                                ),
-                                child: Text(
-                                  "People around you",
-                                  style: TextStyle(
-                                    color: primaryTextColor,
-                                    fontSize: 20.0,
-                                    fontWeight: FontWeight.w900,
-                                    fontFamily: GoogleFonts.kumbhSans(
-                                            fontWeight: FontWeight.w700)
-                                        .fontFamily,
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 6.0,
+                              horizontal: 8.0,
+                            ),
+                            child: Text(
+                              "People around you",
+                              style: TextStyle(
+                                color: primaryTextColor,
+                                fontSize: 20.0,
+                                fontWeight: FontWeight.w900,
+                                fontFamily: GoogleFonts.kumbhSans(
+                                        fontWeight: FontWeight.w700)
+                                    .fontFamily,
+                              ),
+                            ),
+                          ),
+                          (s is FetchingClosestPeopleState)
+                              ? Container(
+                                  height: 48.0,
+                                  width: 48.0,
+                                  padding: EdgeInsets.all(14.0),
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2.0,
+                                  ),
+                                )
+                              : IconButton(
+                                  onPressed: () {
+                                    c.read<UserBloc>().add(SetUserLocationEvent(
+                                        location: _currentLocation));
+                                    c
+                                        .read<ClosestPeopleBloc>()
+                                        .add(FetchClosestPeopleEvent());
+                                  },
+                                  icon: Icon(
+                                    Icons.refresh,
+                                    color: lightIconColor,
                                   ),
                                 ),
-                              ),
-                              (s is FetchingClosestPeopleState)
-                                  ? Container(
-                                      height: 48.0,
-                                      width: 48.0,
-                                      padding: EdgeInsets.all(14.0),
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2.0,
-                                      ),
-                                    )
-                                  : IconButton(
-                                      onPressed: () {
-                                        c
-                                            .read<ClosestPeopleBloc>()
-                                            .add(FetchClosestPeopleEvent());
-                                      },
-                                      icon: Icon(
-                                        Icons.refresh,
-                                        color: lightIconColor,
-                                      ),
-                                    ),
-                            ],
-                          ),
-                          Column(
-                            children: users.map((user) {
-                              if (user.uid == userState.user.uid) {
-                                return Container();
-                              }
-                              double distanceBwUsers = distance(
-                                  userState.user.location, user.location);
-                              return ListTile(
-                                onTap: () {
-                                  context.read<PersonBloc>().add(
-                                        FetchPersonBooks(
-                                          hasBooks: user.hasBooks,
-                                          wantsBooks: user.wantBooks,
-                                        ),
-                                      );
-                                  Navigator.push(
-                                    context,
-                                    CupertinoPageRoute(
-                                      builder: (context) => PersonProfilePage(
-                                        person: user,
-                                        dist: distanceBwUsers,
-                                      ),
+                        ],
+                      ),
+                      Column(
+                        children: users.map((user) {
+                          if (user.uid == userState.user.uid) {
+                            return Container();
+                          }
+                          double distanceBwUsers =
+                              distance(userState.user.location, user.location);
+                          return ListTile(
+                            onTap: () {
+                              context.read<PersonBloc>().add(
+                                    FetchPersonBooks(
+                                      hasBooks: user.hasBooks,
+                                      wantsBooks: user.wantBooks,
                                     ),
                                   );
-                                },
-                                title: Text(
-                                  user.username!,
-                                  style: GoogleFonts.dmSans(
-                                    color: primaryTextColor,
-                                    fontWeight: FontWeight.bold,
+                              Navigator.push(
+                                context,
+                                CupertinoPageRoute(
+                                  builder: (context) => PersonProfilePage(
+                                    person: user,
+                                    dist: distanceBwUsers,
                                   ),
-                                ),
-                                subtitle: Text(
-                                  '$distanceBwUsers km',
-                                  style: GoogleFonts.dmSans(
-                                    color: secondaryTextColor,
-                                  ),
-                                ),
-                                leading: CircleAvatar(
-                                  child: customCachedNetworkImage(
-                                    url: user.photoURL!,
-                                  ),
-                                ),
-                                trailing: Icon(
-                                  CupertinoIcons.forward,
-                                  size: 20.0,
-                                  color: tertiaryTextColor,
                                 ),
                               );
-                            }).toList(),
-                          ),
-                        ],
-                      );
-                    },
-                    listener: (c, s) {}),
+                            },
+                            title: Text(
+                              user.username!,
+                              style: GoogleFonts.dmSans(
+                                color: primaryTextColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '$distanceBwUsers km',
+                              style: GoogleFonts.dmSans(
+                                color: secondaryTextColor,
+                              ),
+                            ),
+                            leading: CircleAvatar(
+                              child: customCachedNetworkImage(
+                                url: user.photoURL!,
+                              ),
+                            ),
+                            trailing: Icon(
+                              CupertinoIcons.forward,
+                              size: 20.0,
+                              color: tertiaryTextColor,
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                    ],
+                  );
+                }, listener: (c, s) {
+                  if (s is FetchingClosestPeopleState) {
+                    ScaffoldMessenger.of(context)
+                        .showSnackBar(customSnackBar(text: s.loadMessage));
+                  } else if (s is ErrorClosestPeopleState) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        customSnackBar(text: s.errorMessage, milli: 3000));
+                  }
+                }),
               ),
-            if (userState is LoggedInUserState &&
-                userState.wantBooks.isEmpty &&
-                userState.hasBooks.isEmpty)
-              Container(
-                height: MediaQuery.of(context).size.height * 0.8,
-                child: Center(
-                  child: Text(
-                    "Find some books that you like!",
-                    style: TextStyle(color: tertiaryTextColor),
-                  ),
-                ),
-              )
           ],
         ),
       ),

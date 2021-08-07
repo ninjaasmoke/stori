@@ -27,7 +27,9 @@ class FetchingClosestPeopleState extends ClosestPeopleState {
 
 class FetchedClosestPeopleState extends ClosestPeopleState {
   final List<AppUser> people;
-  const FetchedClosestPeopleState({required this.people});
+  final GeoPoint currentLocation;
+  const FetchedClosestPeopleState(
+      {required this.people, required this.currentLocation});
 }
 
 class ErrorClosestPeopleState extends ClosestPeopleState {
@@ -44,43 +46,39 @@ class ClosestPeopleBloc extends Bloc<ClosestPeopleEvent, ClosestPeopleState> {
   late PermissionStatus _permissionGranted;
   late LocationData _locationData;
 
-  Future<void> enableLoc() async {
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-    }
-    if (_serviceEnabled != true) {
-      _serviceEnabled = await location.requestService();
-    }
-    if (_permissionGranted == PermissionStatus.denied ||
-        _serviceEnabled != true) {
-      enableLoc();
-    } else if (_permissionGranted == PermissionStatus.deniedForever) {
-      throw Exception(
-        "Location permission not granted! Please grant permission from device settings.",
-      );
-    }
-  }
-
   @override
   Stream<ClosestPeopleState> mapEventToState(ClosestPeopleEvent event) async* {
     if (event is FetchClosestPeopleEvent) {
+      yield FetchingClosestPeopleState(loadMessage: "Fetching people...");
       try {
-        _serviceEnabled = await location.serviceEnabled();
-        await enableLoc();
-        _locationData = await location.getLocation();
-        GeoPoint currLoc = GeoPoint(
-            _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0);
-        yield FetchingClosestPeopleState(
-            loadMessage: 'Fetching closest people...');
-        FireStoreService service = new FireStoreService();
-        people = await service.getClosestUsers(currLoc);
-        yield FetchedClosestPeopleState(people: people);
+        _permissionGranted = await location.hasPermission();
+        _serviceEnabled = await location.requestService();
+        if (_permissionGranted == PermissionStatus.denied) {
+          _permissionGranted = await location.requestPermission();
+        } else if (_permissionGranted == PermissionStatus.deniedForever) {
+          throw Exception(
+            "Location permission not granted! Please grant permission from device settings.",
+          );
+        }
+        if (_serviceEnabled == true) {
+          _locationData = await location.getLocation();
+          GeoPoint currLoc = GeoPoint(
+              _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0);
+          yield FetchingClosestPeopleState(
+              loadMessage: 'Fetching closest people...');
+          FireStoreService service = new FireStoreService();
+          people = await service.getClosestUsers(currLoc);
+          yield FetchedClosestPeopleState(
+              people: people, currentLocation: currLoc);
+        } else {
+          yield ErrorClosestPeopleState(
+              errorMessage: "Location service not enabled.");
+        }
       } catch (e) {
         yield ErrorClosestPeopleState(
           errorMessage: e.toString().contains("permission")
               ? e.toString()
-              : "Unable to fetch closest people!",
+              : "Unable to fetch closest people! ${e.toString()}",
         );
       }
     }

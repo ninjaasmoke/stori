@@ -100,7 +100,7 @@ class FireStoreService {
   }
 
   Future<List<AppUser>> getClosestUsers(GeoPoint location) async {
-    double distance = 1.0;
+    double distance = 20.0;
 
     double lat = 0.009;
     double lon = 0.0001;
