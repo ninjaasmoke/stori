@@ -191,8 +191,6 @@ class UserBloc extends Bloc<UserEvent, UserState> {
               BookModel _book = await BooksClient().getBook(pattern: wBook);
               wantBooks.add(_book);
             }
-            // TODO : remove
-            // yield NewLoggedInUserState(user: _appUser);
             yield LoggedInUserState(
               user: _appUser,
               hasBooks: hasBooks,

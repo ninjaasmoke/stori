@@ -45,9 +45,9 @@ class PersonBloc extends Bloc<PersonEvent, PersonState> {
   Stream<PersonState> mapEventToState(PersonEvent event) async* {
     if (event is FetchPersonBooks) {
       yield LoadingPersonBooksState(loadingMessage: 'Fetching user data...');
+      hasBooks = [];
+      wantBooks = [];
       try {
-        hasBooks = [];
-        wantBooks = [];
         for (var hBook in event.hasBooks) {
           BookModel _book = await BooksClient().getBook(pattern: hBook);
           hasBooks.add(_book);

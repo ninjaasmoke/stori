@@ -459,11 +459,15 @@ class _AppPageState extends State<AppPage> with TickerProviderStateMixin {
                                 )
                               : IconButton(
                                   onPressed: () {
-                                    c.read<UserBloc>().add(SetUserLocationEvent(
-                                        location: _currentLocation));
                                     c
                                         .read<ClosestPeopleBloc>()
                                         .add(FetchClosestPeopleEvent());
+                                    if (s is FetchedClosestPeopleState) {
+                                      c.read<UserBloc>().add(
+                                            SetUserLocationEvent(
+                                                location: s.currentLocation),
+                                          );
+                                    }
                                   },
                                   icon: Icon(
                                     Icons.refresh,
