@@ -2,7 +2,7 @@
 * Have you ever had a book that you no longer needed?
 * Have you ever wondered how you could exchange that book for another book?
 
-## You no longer need to worry! 🤚
+## You no longer need to worry! ✋
 
 **stori** is here.  
 
