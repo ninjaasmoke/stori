@@ -13,6 +13,7 @@ class BookModel {
   final String imageUrl;
   final String thumbnailUrl;
   final String snippet;
+  final List<String> similarBooks;
 
   BookModel({
     required this.id,
@@ -27,6 +28,7 @@ class BookModel {
     required this.imageUrl,
     required this.thumbnailUrl,
     required this.snippet,
+    required this.similarBooks,
   });
 
   static BookModel fromJson(Map<String, dynamic> json) {
@@ -52,6 +54,7 @@ class BookModel {
       snippet: json["searchInfo"] != null
           ? json["searchInfo"]["textSnippet"] ?? ""
           : "",
+      similarBooks: [],
     );
   }
 }

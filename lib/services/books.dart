@@ -55,6 +55,7 @@ class BooksClient {
       imageUrl: '',
       thumbnailUrl: '',
       snippet: '',
+      similarBooks: [],
     );
 
     try {

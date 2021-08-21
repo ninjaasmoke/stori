@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stori/models/BookModel.dart';
 import 'package:stori/services/books.dart';
@@ -59,6 +57,7 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
         String titleBookOfDay = await (fireStoreService.getBookOfDay());
         BookModel bookOfDay =
             await booksClient.getBook(pattern: titleBookOfDay);
+        // Yields a book of the day.
         yield LoadedRecBooksState(
           topics: topics,
           bookOfDay: bookOfDay,
@@ -71,6 +70,7 @@ class RecBooksBloc extends Bloc<RecBooksEvent, RecBooksState> {
               maxResults: 21,
             ),
           );
+          // Yields a list of books.
           yield LoadedRecBooksState(
             topics: topics,
             bookOfDay: bookOfDay,
