@@ -1,16 +1,24 @@
-# stori
+# 📚 stori
+* Have you ever had a book that you no longer needed?
+* Have you ever wondered how you could exchange that book for another book?
 
-A new Flutter project.
+## You no longer need to worry! ✋
 
-## Getting Started
+**stori** is here.  
 
-This project is a starting point for a Flutter application.
+stori lets you add books to your wishlist or a *having_books* list. Then automatically searches for people who are in need of a book that you have, or have a book that you need or **both**.   
+   
+Then you can exchange books, with other books or money!   
 
-A few resources to get you started if this is your first Flutter project:
+**Strike a great deal for both parties and enjoy with your new book or *money*!**
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## How it works ✨
+Stori is developed with [Flutter](https://flutter.dev/) & [Dart](https://dart.dev/).   
+Stori uses [Firebase](https://firebase.google.com/) for authentication & cloudstore as a database.   
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+* In the backend, **stori** creates a database of users and stores them in Firebase,
+* Then, you (the user) can add books you like or have to their respectice lists.
+* These books are given an unique ID and can be accessed & edited at any time.
+* **stori** searches for people who have similar interests in books as you and shows the people who are closest to your current location.
+* You can then, meet up with them, have a cuppa coffee & exhange your books! 
+
