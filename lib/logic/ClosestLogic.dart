@@ -66,10 +66,15 @@ class ClosestPeopleBloc extends Bloc<ClosestPeopleEvent, ClosestPeopleState> {
               _locationData.latitude ?? 0.0, _locationData.longitude ?? 0.0);
           yield FetchingClosestPeopleState(
               loadMessage: 'Fetching closest people...');
-          FireStoreService service = new FireStoreService();
-          people = await service.getClosestUsers(currLoc);
-          yield FetchedClosestPeopleState(
-              people: people, currentLocation: currLoc);
+          try {
+            FireStoreService service = new FireStoreService();
+            people = await service.getClosestUsers(currLoc);
+            print("Fetching people");
+            yield FetchedClosestPeopleState(
+                people: people, currentLocation: currLoc);
+          } catch (e) {
+            throw Exception(e);
+          }
         } else {
           yield ErrorClosestPeopleState(
               errorMessage: "Location service not enabled.");
